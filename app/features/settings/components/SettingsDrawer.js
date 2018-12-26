@@ -92,7 +92,7 @@ class SettingsDrawer extends Component<Props, *> {
     render() {
         return (
             <AkCustomDrawer
-                backIcon = { <ArrowLeft label = 'Back' /> }
+                backIcon = { <ArrowLeft label = '返回' /> }
                 isOpen = { this.props.isOpen }
                 onBackButton = { this._onBackButton }
                 primaryIcon = { <Logo /> } >
@@ -107,7 +107,7 @@ class SettingsDrawer extends Component<Props, *> {
                             name = 'name-setting'>
                             <form onSubmit = { this._onNameFormSubmit }>
                                 <FieldText
-                                    label = 'Name'
+                                    label = '姓名'
                                     onBlur = { this._onNameBlur }
                                     shouldFitContainer = { true }
                                     type = 'text'
@@ -118,17 +118,17 @@ class SettingsDrawer extends Component<Props, *> {
                             name = 'email-setting'>
                             <form onSubmit = { this._onEmailFormSubmit }>
                                 <FieldText
-                                    label = 'Email'
+                                    label = '邮箱'
                                     onBlur = { this._onEmailBlur }
                                     shouldFitContainer = { true }
                                     type = 'text'
                                     value = { this.props._email } />
                             </form>
                         </SpotlightTarget>
-                        <SpotlightTarget
+                        {/* <SpotlightTarget
                             name = 'server-setting'>
                             <ServerURLField />
-                        </SpotlightTarget>
+                        </SpotlightTarget> */}
                         <SpotlightTarget
                             name = 'start-muted-toggles'>
                             <StartMutedToggles />

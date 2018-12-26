@@ -1,9 +1,9 @@
 {
-  "name": "jitsi-meet-electron",
+  "name": "vmeeting-electron",
   "version": "1.1.1",
-  "description": "Electron application for Jitsi Meet",
+  "description": "Vmeeting 桌面程序",
   "main": "./build/main.js",
-  "productName": "Jitsi Meet",
+  "productName": "Vmeeting Desktop",
   "scripts": {
     "start": "webpack --config ./webpack.main.js --mode development && concurrently 'npm:watch' 'electron ./build/main.js'",
     "clean": "rm -rf node_modules build dist",
@@ -16,8 +16,8 @@
     "watch": "webpack --config ./webpack.renderer.js --mode development --watch --watch-poll"
   },
   "build": {
-    "appId": "org.jitsi.jitsi-meet",
-    "productName": "Jitsi Meet",
+    "appId": "top.vmeeting.desktop",
+    "productName": "Vmeeting",
     "generateUpdatesFilesForAllChannels": true,
     "files": [
       "**/*",
@@ -26,14 +26,14 @@
       "!main.js"
     ],
     "mac": {
-      "artifactName": "jitsi-meet.${ext}",
+      "artifactName": "vmeeting.${ext}",
       "category": "public.app-category.video"
     },
     "linux": {
-      "artifactName": "jitsi-meet-${arch}.${ext}",
+      "artifactName": "vmeeting-${arch}.${ext}",
       "category": "VideoConference;AudioVideo;Audio;Video;Network",
-      "description": "Jitsi Meet Desktop App",
-      "executableName": "jitsi-meet",
+      "description": "Vmeeting 桌面程序",
+      "executableName": "Vmeeting",
       "target": [
         {
           "arch": "x64",
@@ -42,7 +42,8 @@
       ]
     },
     "win": {
-      "artifactName": "jitsi-meet.${ext}",
+      "artifactName": "vmeeting.${ext}",
+      "icon": "./resources/icon.ico",
       "target": [
         {
           "arch": [
@@ -69,9 +70,9 @@
     "webrtc",
     "xmpp",
     "electron",
-    "jitsi-meet"
+    "vmeeting"
   ],
-  "author": "Jitsi Team <support@jitsi.org>",
+  "author": "Vmeeting Team",
   "readmeFilename": "README.md",
   "license": "Apache-2.0",
   "dependencies": {
