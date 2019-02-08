@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
 import { Navbar } from '../../navbar';
+import { Onboarding, startOnboarding } from '../../onboarding';
 import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 

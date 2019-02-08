@@ -15,6 +15,7 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { AvatarContainer, SettingsContainer } from '../styled';
 import { setEmail, setName } from '../actions';
 
+import ServerURLField from './ServerURLField';
 import StartMutedToggles from './StartMutedToggles';
 
 type Props = {
