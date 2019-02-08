@@ -42,12 +42,13 @@ class ServerSettingSpotlight extends Component<Props, *> {
                 actions = { [
                     {
                         onClick: this._next,
-                        text: '下一步'
+                        text: 'Next'
                     }
                 ] }
                 dialogPlacement = 'left top'
                 target = { 'server-setting' } >
-                设置服务器，推荐不要配置，直接使用默认服务器。
+                This will be the server where your conferences will take place.
+                You can use your own, but you don't need to!
             </Spotlight>
         );
     }

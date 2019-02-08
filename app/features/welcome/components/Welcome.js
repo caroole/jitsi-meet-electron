@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
 import { Navbar } from '../../navbar';
+import { Onboarding, startOnboarding } from '../../onboarding';
 import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 
@@ -80,7 +81,7 @@ class Welcome extends Component<Props, State> {
      * @returns {void}
      */
     componentDidMount() {
-        // this.props.dispatch(startOnboarding('welcome-page'));
+        this.props.dispatch(startOnboarding('welcome-page'));
     }
 
     /**
@@ -95,7 +96,7 @@ class Welcome extends Component<Props, State> {
                     <Wrapper>
                         { this._renderHeader() }
                         { this._renderBody() }
-                        {/* <Onboarding section = 'welcome-page' /> */}
+                        <Onboarding section = 'welcome-page' />
                     </Wrapper>
                 </AtlasKitThemeProvider>
             </Page>
@@ -199,7 +200,7 @@ class Welcome extends Component<Props, State> {
                             isInvalid = { locationError }
                             isLabelHidden = { true }
                             onChange = { this._onURLChange }
-                            placeholder = '输入会议室名称'
+                            placeholder = 'Enter a name for your conference'
                             shouldFitContainer = { true }
                             type = 'text'
                             value = { this.state.url } />
@@ -209,7 +210,7 @@ class Welcome extends Component<Props, State> {
                     appearance = 'primary'
                     onClick = { this._onJoin }
                     type = 'button'>
-                    进入
+                    GO
                 </Button>
             </Header>
         );

@@ -3,30 +3,30 @@ export default {
     /**
      * The URL with extra information about the app / service.
      */
-    aboutURL: 'https://www.yiyangzzt.com',
+    aboutURL: 'https://jitsi.org/what-is-jitsi/',
 
     /**
      * Application name.
      */
-    appName: 'zzt',
+    appName: 'Jitsi Meet',
 
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
      */
-    defaultServerURL: 'https://i.yiyangzzt.com',
+    defaultServerURL: 'https://meet.jit.si',
 
     /**
      * URL to send feedback.
      */
-    feedbackURL: 'mailto:support@yiyangzzt.com',
+    feedbackURL: 'mailto:support@jitsi.org',
 
     /**
      * The URL of Privacy Policy Page.
      */
-    privacyPolicyURL: 'https://www.yiyangzzt.com',
+    privacyPolicyURL: 'https://jitsi.org/meet/privacy',
 
     /**
      * The URL of Terms and Conditions Page.
      */
-    termsAndConditionsURL: 'https://www.yiyangzzt.com'
+    termsAndConditionsURL: 'https://jitsi.org/meet/terms'
 };

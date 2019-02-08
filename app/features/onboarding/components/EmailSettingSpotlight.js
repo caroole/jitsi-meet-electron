@@ -42,12 +42,13 @@ class EmailSettingSpotlight extends Component<Props, *> {
                 actions = { [
                     {
                         onClick: this._next,
-                        text: '下一步'
+                        text: 'Next'
                     }
                 ] }
                 dialogPlacement = 'left top'
                 target = { 'email-setting' } >
-                设置您的邮箱地址。
+                The email you enter here will be part of your user profile and
+                it will be used to display your stored avatar in gravatar.com .
             </Spotlight>
         );
     }
