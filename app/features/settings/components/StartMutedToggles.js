@@ -88,12 +88,12 @@ class StartMutedToggles extends Component<Props, State> {
             <TogglesContainer>
                 <ToggleWithLabel
                     isDefaultChecked = { this.props._startWithAudioMuted }
-                    label = '自动静音'
+                    label = 'Start with Audio muted'
                     onChange = { this._onAudioToggleChange }
                     value = { this.state.startWithAudioMuted } />
                 <ToggleWithLabel
                     isDefaultChecked = { this.props._startWithVideoMuted }
-                    label = '关闭摄像头'
+                    label = 'Start with Video muted'
                     onChange = { this._onVideoToggleChange }
                     value = { this.state.startWithVideoMuted } />
             </TogglesContainer>
