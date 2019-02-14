@@ -42,13 +42,12 @@ class NameSettingSpotlight extends Component<Props, *> {
                 actions = { [
                     {
                         onClick: this._next,
-                        text: 'Next'
+                        text: '下一步'
                     }
                 ] }
                 dialogPlacement = 'left top'
                 target = { 'name-setting' } >
-                This will be your display name, others will see you with this
-                name.
+                设置您的名字。
             </Spotlight>
         );
     }

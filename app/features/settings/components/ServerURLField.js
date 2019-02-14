@@ -68,10 +68,10 @@ class ServerURLField extends Component<Props, State> {
             <form onSubmit = { this._onServerURLSubmit }>
                 <FieldTextStateless
                     invalidMessage
-                        = { 'Invalid Server URL or external API not enabled' }
+                        = { '服务器ip不可用' }
                     isInvalid = { !this.state.isValid }
                     isValidationHidden = { this.state.isValid }
-                    label = 'Server URL'
+                    label = '服务器地址'
                     onBlur = { this._onServerURLSubmit }
                     onChange = { this._onServerURLChange }
                     placeholder = { config.defaultServerURL }

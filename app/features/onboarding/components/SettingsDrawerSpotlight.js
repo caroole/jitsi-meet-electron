@@ -45,7 +45,7 @@ class SettingsDrawerSpotlight extends Component<Props, *> {
                 dialogPlacement = 'right top'
                 target = { 'settings-drawer-button' }
                 targetOnClick = { this._next }>
-                Click here to open the settings drawer.
+                点击打开设置页面.
             </Spotlight>
         );
     }
