@@ -1,9 +1,9 @@
 {
   "name": "vmeeting-electron",
   "version": "1.1.1",
-  "description": "Vmeeting 桌面程序",
+  "description": "ZZTBeta 桌面程序",
   "main": "./build/main.js",
-  "productName": "Vmeeting Desktop",
+  "productName": "ZZTBeta Desktop",
   "scripts": {
     "start": "webpack --config ./webpack.main.js --mode development && concurrently 'npm:watch' 'electron ./build/main.js'",
     "clean": "rm -rf node_modules build dist",
@@ -16,8 +16,8 @@
     "watch": "webpack --config ./webpack.renderer.js --mode development --watch --watch-poll"
   },
   "build": {
-    "appId": "top.vmeeting.desktop",
-    "productName": "Vmeeting",
+    "appId": "beta.vmeeting.desktop",
+    "productName": "ZZTbeta",
     "generateUpdatesFilesForAllChannels": true,
     "files": [
       "**/*",
@@ -43,7 +43,7 @@
       ]
     },
     "win": {
-      "artifactName": "vmeeting.${ext}",
+      "artifactName": "ZZTbeta.${ext}",
       "icon": "./resources/icon.ico",
       "target": [
         {
