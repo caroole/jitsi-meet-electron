@@ -15,7 +15,7 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { AvatarContainer, SettingsContainer } from '../styled';
 import { setEmail, setName } from '../actions';
 
-import ServerURLField from './ServerURLField';
+// import ServerURLField from './ServerURLField';
 import StartMutedToggles from './StartMutedToggles';
 
 type Props = {
@@ -125,10 +125,10 @@ class SettingsDrawer extends Component<Props, *> {
                                     value = { this.props._email } />
                             </form>
                         </SpotlightTarget>
-                        <SpotlightTarget
+                        {/* <SpotlightTarget
                             name = 'server-setting'>
                             <ServerURLField />
-                        </SpotlightTarget>
+                        </SpotlightTarget> */}
                         <SpotlightTarget
                             name = 'start-muted-toggles'>
                             <StartMutedToggles />
@@ -223,7 +223,7 @@ class SettingsDrawer extends Component<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     return {
-        _avatarURL: state.settings.avatarURL,
+        _avatarURL: 'https://beta.vmeeting.top/images/avatar.png',
         _email: state.settings.email,
         _name: state.settings.name
     };
