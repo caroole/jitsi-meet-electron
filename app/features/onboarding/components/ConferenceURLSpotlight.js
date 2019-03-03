@@ -47,9 +47,7 @@ class ConferenceURLSpotlight extends Component<Props, *> {
                 ] }
                 dialogPlacement = 'bottom center'
                 target = { 'conference-url' } >
-                Enter the name (or full URL) of the room you want to join. You
-                may make a name up, just let others know so they enter the same
-                name.
+                在此处输入您的会议室名称，注意会议室名称只能包含字母或数字！
             </Spotlight>
         );
     }
