@@ -8,12 +8,12 @@ export default {
     /**
      * Application name.
      */
-    appName: 'ZZTBeta',
+    appName: 'Vmeeting',
 
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
      */
-    defaultServerURL: 'https://beta.vmeeting.top',
+    defaultServerURL: 'https://i.vmeeting.top',
 
     /**
      * URL to send feedback.
