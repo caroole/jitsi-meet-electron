@@ -16,6 +16,7 @@ const {
 } = require('jitsi-meet-electron-utils');
 const path = require('path');
 const URL = require('url');
+const ipc = require('electron').ipcMain;
 
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
@@ -35,7 +36,22 @@ if (isDev) {
  * IMPORTANT: Must be defined as global in order to not be garbage collected
  * acidentally.
  */
-let mainWindow = null;
+var mainWindow = null;
+var managerWin = null;
+ipc.on('showManagerWindow', (sys, isShow) => {
+    if(isShow){
+        managerWin.show();
+    }
+    else{
+        managerWin.hide();
+    }
+  });
+ipc.on('main-manager',(sys, msg) => {
+    managerWin.webContents.send('main-manager',msg);
+  });
+ipc.on('manager-main',(sys, msg) => {
+      mainWindow.webContents.send('manager-main',msg);
+  });
 
 /**
  * Sets the application menu. It is hidden on all platforms except macOS because
@@ -104,7 +120,7 @@ function createJitsiMeetWindow() {
     setApplicationMenu();
 
     // Check for Updates.
-    autoUpdater.checkForUpdatesAndNotify();
+    //autoUpdater.checkForUpdatesAndNotify();
 
     // Load the previous window state with fallback to defaults.
     const windowState = windowStateKeeper({
@@ -138,9 +154,24 @@ function createJitsiMeetWindow() {
     };
 
     mainWindow = new BrowserWindow(options);
+
     windowState.manage(mainWindow);
     mainWindow.loadURL(indexURL);
 
+    const indexManagerWinURL = URL.format({
+        pathname: path.resolve(basePath, './build/mgrwin/mgrwin.html'),
+        protocol: 'file:',
+        slashes: true
+    });
+    managerWin = new BrowserWindow({ width: 400, height: 600, show: false });
+    managerWin.loadURL(indexManagerWinURL);
+    managerWin.on('close',(e)=>{
+        e.preventDefault();
+        managerWin.hide();
+    })
+    managerWin.webContents.openDevTools();
+
+    mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 
@@ -154,6 +185,9 @@ function createJitsiMeetWindow() {
     });
     mainWindow.on('closed', () => {
         mainWindow = null;
+        managerWin.close();
+        managerWin = null;
+
     });
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
@@ -183,12 +217,15 @@ app.on('activate', () => {
 app.on('certificate-error',
     // eslint-disable-next-line max-params
     (event, webContents, url, error, certificate, callback) => {
-        if (url.startsWith('https://localhost')) {
-            event.preventDefault();
-            callback(true);
-        } else {
-            callback(false);
-        }
+
+        event.preventDefault();
+        callback(true);
+        // if (url.startsWith('https://localhost')) {
+        //     event.preventDefault();
+        //     callback(true);
+        // } else {
+        //     callback(false);
+        // }
     }
 );
 

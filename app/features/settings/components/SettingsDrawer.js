@@ -90,6 +90,7 @@ class SettingsDrawer extends Component<Props, *> {
      * @returns {ReactElement}
      */
     render() {
+        console.warn('run into setting');
         return (
             <AkCustomDrawer
                 backIcon = { <ArrowLeft label = 'Back' /> }

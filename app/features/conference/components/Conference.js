@@ -1,26 +1,20 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
-
+import { initPopupsConfigurationRender, RemoteControl, setupAlwaysOnTopRender, setupScreenSharingForWindow, setupWiFiStats } from 'jitsi-meet-electron-utils';
 import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-
-import {
-    RemoteControl,
-    setupScreenSharingForWindow,
-    setupAlwaysOnTopRender,
-    initPopupsConfigurationRender,
-    setupWiFiStats
-} from 'jitsi-meet-electron-utils';
-
 import config from '../../config';
 import { setEmail, setName } from '../../settings';
-
+import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
-import { getExternalApiURL } from '../../utils';
+
+import type { Dispatch } from 'redux';
+
+const ipc = require('electron').ipcRenderer;
+const remote = require('electron').remote;
 
 type Props = {
 
@@ -272,10 +266,19 @@ class Conference extends Component<Props, State> {
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
+                console.warn('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
-                this._onVideoConferenceJoined(conferenceInfo);
+                this._onVideoConferenceJoined(conferenceInfo);                
+                ipc.send('notify','test');
             }
         );
+        this._api.on('show-manager-window',
+            (isShow: Object) => {
+                this._showManagerWindow(isShow);
+            }
+        );
+        ipc.on('manager-main',(event, arg) => {
+        })
     }
 
     /**
@@ -340,6 +343,17 @@ class Conference extends Component<Props, State> {
             (params: Object) => this._onDisplayNameChange(params, id));
         this._api.on('emailChange',
             (params: Object) => this._onEmailChange(params, id));
+    }
+
+    
+    /**
+     * Show manager window or not
+     *
+     *  @param {boolean} isShow - whether show manager window or not.
+     * @returns {void}
+     */
+    _showManagerWindow(isShow: boolean) {
+        ipc.send('showManagerWindow',isShow);
     }
 
     /**
