@@ -13,7 +13,7 @@ export default {
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
      */
-    defaultServerURL: 'https://i.vmeeting.top',
+    defaultServerURL: 'https://demo.vmeeting.top',
 
     /**
      * URL to send feedback.

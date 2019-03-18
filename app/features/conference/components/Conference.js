@@ -1,26 +1,20 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
-
+import { initPopupsConfigurationRender, RemoteControl, setupAlwaysOnTopRender, setupScreenSharingForWindow, setupWiFiStats } from 'jitsi-meet-electron-utils';
 import React, { Component } from 'react';
-import type { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
-
-import {
-    RemoteControl,
-    setupScreenSharingForWindow,
-    setupAlwaysOnTopRender,
-    initPopupsConfigurationRender,
-    setupWiFiStats
-} from 'jitsi-meet-electron-utils';
-
 import config from '../../config';
 import { setEmail, setName } from '../../settings';
-
+import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
-import { getExternalApiURL } from '../../utils';
+
+import type { Dispatch } from 'redux';
+
+const ipc = require('electron').ipcRenderer;
+const remote = require('electron').remote;
 
 type Props = {
 
@@ -272,10 +266,22 @@ class Conference extends Component<Props, State> {
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
+                console.warn('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
-                this._onVideoConferenceJoined(conferenceInfo);
+                this._onVideoConferenceJoined(conferenceInfo);                
+                ipc.send('testnotify','test');
             }
         );
+        console.warn('set openManagerWindow');
+        this._api.on('openManagerWindow',
+            (info: Object) => {
+                console.warn('come in openManagerWindow='+info.isopen);
+                this._openManagerWindow();
+            }
+        );
+        ipc.on('testcmd',(event, arg) => {
+            console.warn('come in testcmd');
+        })
     }
 
     /**
@@ -340,6 +346,18 @@ class Conference extends Component<Props, State> {
             (params: Object) => this._onDisplayNameChange(params, id));
         this._api.on('emailChange',
             (params: Object) => this._onEmailChange(params, id));
+    }
+
+    
+    /**
+     * Saves conference info on joining it.
+     *
+     * @param {Object} conferenceInfo - Contains information about the current
+     * conference.
+     * @returns {void}
+     */
+    _openManagerWindow() {
+        ipc.send('openManagerWindow','open');
     }
 
     /**

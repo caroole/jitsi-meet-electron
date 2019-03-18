@@ -17,7 +17,7 @@ export function getExternalApiURL(serverURL: string) {
         serverURL = config.defaultServerURL;
     }
 
-    return `${normalizeServerURL(serverURL)}/external_api.js`;
+    return `${normalizeServerURL(serverURL)}/external_api.js?v=1`;
 }
 
 /**
