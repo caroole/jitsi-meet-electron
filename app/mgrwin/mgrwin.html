@@ -1,0 +1,107 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/global.css" rel="stylesheet"/>
+    <link href="css/style.css" rel="stylesheet"/>
+    <link href="css/btn.css" rel="stylesheet"/>
+    <title>会议管理</title>
+    <script src="js/html-font.js"></script>
+    <script>
+
+        var ipc = require('electron').ipcRenderer;
+        ipc.on('testnotify', (event, arg) => {
+            
+            console.warn(JSON.stringify(arg));
+        });
+
+        function testcmd(){
+            ipc.send('testcmd','test');
+        }
+    </script>
+</head>
+
+<body>
+<div class="container">
+
+
+    <header class="lui-header">
+        <div class="text-center pad10 just-between">
+            <div><h1>参会者(1)</h1></div>
+        </div>
+    </header>
+
+    <section class="content">
+        <div class="cont">
+            <ul class="list pad10 mar0 ">
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+                <li>
+                    <div class="box">
+                        <div class="flex-grow-1">华为P10</div>
+                        <i class="fa fa-microphone"></i></div>
+                </li>
+
+            </ul>
+        </div>
+    </section>
+
+    <div class="footer2">
+        <button class="btn btn-default btn-sm btn-round" onclick="startRecording(this);">全体静音</button>
+        <button class="btn btn-default btn-sm btn-round" onclick="stopRecording(this);">解除全体静音</button>
+        <button id="btn-more" class="btn btn-default btn-sm btn-round btn-right" onclick="testcmd()">更多</button>
+    </div>
+</div>
+</div>
+</body>
+</html>

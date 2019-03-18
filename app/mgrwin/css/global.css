@@ -1,0 +1,443 @@
+/* CSS Document */
+/* 全局开始 */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal
+}
+
+.clear {
+    clear: both
+}
+
+.clearfix:after {
+    content: '';
+    display: block;
+    clear: both
+}
+
+.lui-form-text, button {
+    font-size: 0.3rem;
+}
+
+.flex-start {
+}
+
+.mar0 {
+    margin: 0 !important;
+}
+
+body, html, h1, h2, h3, h4, h5, h6, li, ul, p {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+a {
+    color: #333;
+    text-decoration: none
+}
+
+/* 全局结束 */
+/* 字体颜色 */
+.grew {
+    color: #ccc
+}
+
+.blue {
+    color: #09F
+}
+
+.green {
+    color: #0C3
+}
+
+.black {
+    color: #000
+}
+
+.org {
+    color: #F60
+}
+
+.red {
+    color: #cd1818
+}
+
+.yellow {
+    color: #FF0
+}
+
+/* 字体颜色结束 */
+/* 字体大小 */
+/* 字体大小结束 */
+/* 背景 */
+.bg-grew {
+    background: #ddd
+}
+
+.bg-write {
+    background: #fff
+}
+
+.bg-black {
+    background: #000 !important
+}
+
+.daima {
+    background: #222424;
+}
+
+/* 背景结束 */
+input, button {
+    outline: none !important;
+}
+
+img {
+    max-width: 100%
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+/* 间距 */
+
+/* 间距结束 */
+.dis-inb {
+    display: inline-block
+}
+
+/* 高度占用 */
+.hei10 {
+    height: .25rem;
+}
+
+.hei20 {
+    height: .5rem;
+}
+
+.hei30 {
+    height: .75rem;
+}
+
+.hei40 {
+    height: 1rem;
+}
+
+.hei50 {
+    height: 1.75rem;
+}
+
+/* 高度占用结束 */
+
+.text-center {
+    text-align: center
+}
+
+/* 长度百分比 */
+
+.lui-col-20 {
+    position: relative;
+    width: 20%;
+    float: left
+}
+
+.lui-col-25 {
+    position: relative;
+    width: 25%;
+    float: left
+}
+
+.lui-col-33 {
+    position: relative;
+    width: 33.33%;
+    float: left
+}
+
+.lui-col-50 {
+    position: relative;
+    width: 50%;
+    float: left
+}
+
+.lui-col-100 {
+    width: 100%
+}
+
+/* 长度百分比结束 */
+
+.con {
+    background: #eee;
+    padding: 10px;
+    font-size: 12px;
+    line-height: 24px
+}
+
+
+.lui-line {
+    clear: both;
+    border-bottom: #eee solid 1px;
+}
+
+
+/* 按钮 */
+.lui-btn, input[type=button], input[type=reset], input[type=submit] {
+
+    font-weight: 400;
+    line-height: 1.42;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 0;
+    padding: 0.22rem .7rem;
+    cursor: pointer;
+    -webkit-transition: all;
+    transition: all;
+    -webkit-transition-timing-function: linear;
+    transition-timing-function: linear;
+    -webkit-transition-duration: .2s;
+    transition-duration: .2s;
+    text-align: center;
+    vertical-align: top;
+    white-space: nowrap;
+    color: #333;
+    border: 1px solid #ccc;
+    border-radius: 2rem;
+
+    background-color: #fff;
+
+}
+
+.lui-btn-blue, .lui-btn-primary, input[type=submit] {
+    color: #fff;
+    border: 1px solid #007aff;
+    background-color: #007aff;
+}
+
+.lui-btn-green, .lui-btn-positive, .lui-btn-success {
+    color: #fff;
+    border: 1px solid #4cd964;
+    background-color: #4cd964;
+}
+
+.lui-btn-warning, .lui-btn-yellow {
+    color: #fff;
+    border: 1px solid #f0ad4e;
+    background-color: #f0ad4e;
+}
+
+.lui-btn-danger, .lui-btn-negative, .lui-btn-red {
+    color: #fff;
+    border: 1px solid #d43131;
+    background-color: #d43131;
+}
+
+.lui-btn-bai {
+    color: #d73c3c;
+    border: 1px solid #ffffff;
+    background-color: #ffffff;
+}
+
+.lui-btn-grew {
+    color: #fff;
+    border: 1px solid #999999;
+    background-color: #999999;
+}
+
+.lui-btn-danger:active {
+
+    border: 1px solid #b72b2b;
+    background-color: #b72b2b;
+}
+
+.lui-btn-purple, .lui-btn-royal {
+    color: #fff;
+    border: 1px solid #8a6de9;
+    background-color: #8a6de9;
+}
+
+.lui-btn-outlined {
+    background-color: transparent;
+}
+
+.lui-btn-outlined.lui-btn-blue, .lui-btn-outlined.lui-btn-primary {
+    color: #007aff;
+}
+
+.lui-btn-outlined.lui-btn-green, .lui-btn-outlined.lui-btn-positive, .lui-btn-outlined.lui-btn-success {
+    color: #4cd964;
+}
+
+.lui-btn-outlined.lui-btn-warning, .lui-btn-outlined.lui-btn-yellow {
+    color: #f0ad4e;
+}
+
+.lui-btn-outlined.lui-btn-danger, .lui-btn-outlined.lui-btn-negative, .lui-btn-outlined.lui-btn-red {
+    color: #dd524d;
+}
+
+.lui-btn-outlined.lui-btn-purple, .lui-btn-outlined.lui-btn-royal {
+    color: #8a6de9;
+}
+
+.lui-btn-sm {
+    padding: 2px 5px;
+    font-size: 12px
+}
+
+.lui-btn-big {
+    padding: 10px 24px
+}
+
+.lui-btn-no {
+    border-radius: 0
+}
+
+/* 按钮结束 */
+/* 角标 */
+input::-webkit-input-placeholder {
+    color: #ccc;
+}
+
+input::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #ccc;
+}
+
+input:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #ccc;
+}
+
+input:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #ccc;
+}
+
+.lui-badge {
+    font-size: 12px;
+    line-height: 1;
+    display: inline-block;
+    padding: 3px 6px;
+    color: #333;
+    border-radius: 100px;
+    background-color: rgba(0, 0, 0, .15);
+}
+
+.lui-badge-blue, .lui-badge-primary {
+    color: #fff;
+    background-color: #007aff;
+}
+
+.lui-badge-green, .lui-badge-success {
+    color: #fff;
+    background-color: #4cd964;
+}
+
+.lui-badge-warning, .lui-badge-yellow {
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
+.lui-badge-danger, .lui-badge-red {
+    color: #fff;
+    background-color: #dd524d;
+}
+
+.lui-badge-purple, .lui-badge-royal {
+    color: #fff;
+    background-color: #8a6de9;
+}
+
+.lui-badge-blue.lui-badge-inverted, .lui-badge-primary.lui-badge-inverted {
+    color: #007aff;
+    background-color: transparent;
+}
+
+.mui-badge {
+    margin: 10px;
+}
+
+.mui-badge {
+    font-size: 12px;
+    line-height: 1;
+    display: inline-block;
+    padding: 3px 6px;
+    color: #333;
+    border-radius: 100px;
+    background-color: rgba(0, 0, 0, .15);
+}
+
+.mui-badge-blue, .mui-badge-primary {
+    color: #fff;
+    background-color: #007aff;
+}
+
+.mui-badge-green, .mui-badge-success {
+    color: #fff;
+    background-color: #4cd964;
+}
+
+.mui-badge-warning, .mui-badge-yellow {
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
+.mui-badge-danger, .mui-badge-red {
+    color: #fff;
+    background-color: #dd524d;
+}
+
+.mui-badge-purple, .mui-badge-royal {
+    color: #fff;
+    background-color: #8a6de9;
+}
+
+/* 角标结束 */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    justify-content: space-between;
+
+}
+
+.lui-header, .footer {
+
+}
+
+.content {
+
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    margin-bottom: 80px;
+
+
+}
+
+.footer {
+    padding-top: .5rem;
+    z-index: 555;
+    background: #fff;
+    width: 100%;
+}
+
+.fix-top {
+    top: 0;
+    position: fixed;
+    width: 100%;
+}
+
+.fix-bot {
+    bottom: 0;
+    position: fixed;
+    width: 100%
+}
+
+.cont {
+    height: 100%;
+    overflow: auto;
+    width: 100%;
+}
