@@ -1,0 +1,388 @@
+@charset "utf-8";
+/* CSS Document */
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-size: 0.25rem;
+    height: 100%;
+}
+
+a {
+    font-size: 0.25rem;
+    text-decoration: none
+}
+
+ul, li, h1, h2, h3, p {
+    list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.pad10 {
+    padding: 0 .55rem
+}
+
+.pad20 {
+    padding: 0 0.85rem;
+}
+
+.font-sm {
+    font-size: 0.25rem
+}
+
+.font-big {
+    font-size: .48rem;
+}
+
+.h1 {
+    margin: 0.5rem 0 .3rem 0;
+}
+
+.lui-form-text {
+    border: none;
+    min-height: 1.3rem;
+    background: none
+}
+
+.lui-form ul li {
+    position: relative;
+    padding: 0rem 0;
+    padding-top: 0.5rem;
+    flex-direction: column-reverse;
+}
+
+.lui-form-text {
+    border-bottom: #eee solid 1px
+}
+
+.lui-form .lui-form-text:focus {
+    border-bottom: #333 solid 1px
+}
+
+.lui-form ul li label {
+}
+
+.lui-form-block, .lui-btn-block {
+    width: 100%
+}
+
+.lui-form ul li .form-r {
+}
+
+.des {
+    line-height: .6rem;
+    font-size: .3rem;
+    margin-top: 0.1rem;
+}
+
+.logo {
+    padding: 1rem 0;
+    display: block;
+    width: 2.2rem;
+    margin: 0 auto;
+}
+
+.logo img {
+    width: 4rem
+}
+
+.lui-form ul {
+}
+
+.daima .lui-header {
+    border-bottom: none !important;
+    color: #fff !important;
+    background: #000;
+}
+
+.daima .lui-form-text {
+    color: #fff;
+}
+
+.daima .lui-header .fa-angle-left {
+    color: #fff !important;
+}
+
+.daima .lui-form ul li {
+    border-bottom: #999 solid 1px;
+}
+
+.list .box {
+    align-items: center
+}
+
+.list .box i {
+}
+
+.txtslider {
+    color: #333;
+}
+
+.txtslider .but {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 1.2rem;
+}
+
+.txtslider .but button {
+    position: relative;
+    top: 0.25rem;
+}
+
+.box {
+    display: flex;
+}
+
+.just-between {
+    justify-content: space-between
+}
+
+.flex-grow-0 {
+    flex-grow: 0;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+.wjmm {
+    display: block;
+    line-height: 1.3rem;
+    position: absolute;
+    right: 0;
+    border: none;
+    background: no-repeat;
+}
+
+.flex-direction-block {
+    flex-direction: column
+}
+
+.lui-header i {
+    line-height: .9rem;
+    font-size: .48rem;
+}
+
+.align-items-center {
+    align-items: center;
+    justify-content: center;
+}
+
+.alert {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.alert > .box {
+    height: 100%;
+}
+
+.tips {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+}
+
+/* 头部 */
+.lui-header {
+    background: #FFF;
+    background: #fff;
+    z-index: 5555;
+    border-bottom: #eee solid 1px;
+    position: relative;
+    width: 100%;
+    left: 0;
+    top: 0;
+    line-height: .9rem;
+    text-align: center;
+}
+
+.lui-header h1 {
+    font-size: .3rem;
+    margin: .2rem 0 .2rem 0;
+}
+
+/* 图标位置 */
+
+.p-left {
+    position: absolute;
+    left: .5rem;
+    line-height: .9rem;
+    height: .9rem;
+    display: inline-block;
+    top: 0
+}
+
+.p-right {
+    position: absolute;
+    right: 0;
+    top: 0
+}
+
+.list {
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+.list li {
+    padding: 0.1rem 0;
+}
+
+.list li:last-child {
+    border: none;
+}
+
+.ico {
+    display: inline-block;
+    width: .52rem;
+    height: .52rem;
+    background-size: 100% 100% !important;
+}
+
+.ico1 {
+    background: url(../img/ico1.png) no-repeat;
+}
+
+.ico2 {
+    background: url(../img/ico2.png) no-repeat;
+}
+
+.ico3 {
+    background: url(../img/ico3.png) no-repeat;
+}
+
+.ico4 {
+    background: url(../img/ico4.png) no-repeat;
+}
+
+.ico5 {
+    background: url(../img/ico5.png) no-repeat;
+}
+
+.tit {
+    padding: 0.3rem .5rem;
+    font-size: 0.3rem;
+    border-radius: 0.1rem;
+    background: #f2f2f2;
+}
+
+.current .tit, .jixing:hover .tit {
+    background: #d43232;
+    color: #fff;
+}
+
+.jixing ul {
+    height: 0;
+    overflow: hidden;
+}
+
+.current ul {
+    height: auto;
+}
+
+.jixing ul li {
+    font-size: .25rem;
+}
+
+.jixing i.fa {
+    font-size: .35rem;
+    color: #999;
+}
+
+.jixing .list .box i {
+    margin: 0;
+}
+
+.jixing .tit i {
+    color: #000;
+}
+
+.jixing ul li {
+    padding: 0.53rem 0;
+}
+
+.jixing .tit i {
+    transform: rotate(90deg);
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -moz-transform: rotate(90deg); /* Firefox */
+    -webkit-transform: rotate(90deg); /* Safari 和 Chrome */
+    -o-transform: rotate(90deg);
+}
+
+.current .tit i, .jixing:hover .tit i {
+    color: #fff;
+    transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg); /* IE 9 */
+    -moz-transform: rotate(-90deg); /* Firefox */
+    -webkit-transform: rotate(-90deg); /* Safari 和 Chrome */
+    -o-transform: rotate(-90deg);
+}
+
+.yin .swiper-slide img {
+}
+
+.jixing:hover ul {
+    height: auto
+}
+
+.jixing {
+    min-height: 1.4rem;
+}
+
+.yin .swiper-pagination {
+    bottom: 1.2rem !important;
+}
+
+.yin .swiper-pagination-bullet {
+    width: 0.25rem;
+    height: 0.25rem;
+    margin: 0 0.1rem !important;
+    border-radius: .5rem;
+    background: #f0736a;
+}
+
+.bot {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0%;
+}
+
+@media all and (orientation: landscape) {
+
+    .bot {
+        position: relative;
+    }
+
+}
+
+.imgslider {
+    height: 67%;
+    display: flex;
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center;
+}
+
+.footer2{
+    position:absolute;
+    bottom:0;
+    height:80px;
+    width: 100%;
+    text-align: center;
+    left: 0;
+    padding-top: .2rem;
+}
