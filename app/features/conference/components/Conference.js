@@ -14,7 +14,6 @@ import { LoadingIndicator, Wrapper } from '../styled';
 import type { Dispatch } from 'redux';
 
 const ipc = require('electron').ipcRenderer;
-const remote = require('electron').remote;
 
 type Props = {
 
@@ -268,8 +267,29 @@ class Conference extends Component<Props, State> {
             (conferenceInfo: Object) => {
                 console.warn('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
-                this._onVideoConferenceJoined(conferenceInfo);                
-                ipc.send('notify','test');
+                this._onVideoConferenceJoined(conferenceInfo);    
+                var notify = {};
+                notify.notifyID = 'videoConferenceJoined';
+                notify.conferenceInfo = conferenceInfo;
+                ipc.send('main-manager',notify);
+            }
+        );
+        this._api.on('participant-joined',
+            (participant: Object) => {
+                console.warn('participant-joined:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
+            }
+        );
+        this._api.on('participant-left',
+            (participant: Object) => {
+                console.warn('participant-left:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
+            }
+        );
+        this._api.on('audio-mute-changed',
+            (participant: Object) => {
+                console.warn('audio-mute-changed:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
             }
         );
         this._api.on('show-manager-window',
@@ -278,6 +298,7 @@ class Conference extends Component<Props, State> {
             }
         );
         ipc.on('manager-main',(event, arg) => {
+
         })
     }
 
@@ -356,6 +377,20 @@ class Conference extends Component<Props, State> {
         ipc.send('showManagerWindow',isShow);
     }
 
+    /**
+     * update participant
+     *
+     *  @param {map} plist - participant list
+     * @returns {void}
+     */
+    _updateParticipant(plist) {
+        if(plist){
+            var notify = {};
+            notify.notifyID = 'updateParticipant';
+            notify.participant = plist;
+            ipc.send('main-manager',notify);
+        }
+    }
     /**
      * Set Avatar URL from settings to conference.
      *

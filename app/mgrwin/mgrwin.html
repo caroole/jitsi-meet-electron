@@ -10,15 +10,84 @@
     <title>会议管理</title>
     <script src="js/html-font.js"></script>
     <script>
-
         var ipc = require('electron').ipcRenderer;
-        ipc.on('testnotify', (event, arg) => {
-            
-            console.warn(JSON.stringify(arg));
+        var localId;
+        ipc.on('main-manager', (event, arg) => {
+            switch (arg.notifyID) {
+                case 'updateParticipant':
+                    updateParticipant(arg.plist);
+                    break;
+                case 'videoConferenceJoined':
+                    localId = arg.conferenceInfo.id;
+                    break;
+            }
         });
 
-        function testcmd(){
-            ipc.send('testcmd','test');
+        function sendToMain(arg){
+            ipc.send('manager-main',arg);
+        }
+        function muteById(id) {
+            let command={};
+            command.cmd = 'muteById';
+            command.id = id;
+            sendToMain(command);
+        }
+        function muteAll() {
+            let command={};
+            command.cmd = 'muteAll';
+            sendToMain(command);
+        }
+        function muteCancelById(id) {
+            let command={};
+            command.cmd = 'muteCancelById';
+            command.id = id;
+            sendToMain(command);
+        }
+        function muteCancelAll() {
+            let command={};
+            command.cmd = 'muteCancelAll';
+            sendToMain(command);
+        }
+        function updateParticipant(plist) {
+            for(let id in plist){
+                if(id == localId)
+                    continue;
+                let li = document.getElementById(id);
+                let isOld = false;
+                if(li){
+                    isOld = true;
+                }
+                else{
+                    li = document.createElement('li');
+                    li.id = id;
+                }
+                let child = "\n" +
+                    "                    <div class=\"box\">\n" +
+                    "                        <div class=\"flex-grow-1\">"+plist[id].formattedDisplayName+"</div>\n"
+                if(plist[id].mute){
+                    child +=
+                        "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById("+id+")'></i>\n" +
+                        "                    </div>";
+                }
+                else{
+                    child +=
+                        "                        <i class=\"fa fa-microphone\" onclick='muteById("+id+")'></i>\n" +
+                        "                    </div>";
+                }
+                li.innerHTML = child;
+                if(!isOld){
+                    document.getElementById('participantLst').appendChild(li);
+                }
+            }
+            let cNode =document.getElementById('participantLst').getElementsByTagName('li');
+            for( let i=0; i<cNode.length; i++){
+                for(let id in plist){
+                    if(cNode[i].id == id)
+                        continue;
+                    document.getElementById('participantLst').removeChild(cNode[i]);
+                }
+            }
+
         }
     </script>
 </head>
@@ -35,71 +104,16 @@
 
     <section class="content">
         <div class="cont">
-            <ul class="list pad10 mar0 ">
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
+            <ul id = "participantLst" class="list pad10 mar0 ">
 
             </ul>
         </div>
     </section>
 
     <div class="footer2">
-        <button class="btn btn-default btn-sm btn-round" onclick="startRecording(this);">全体静音</button>
-        <button class="btn btn-default btn-sm btn-round" onclick="stopRecording(this);">解除全体静音</button>
-        <button id="btn-more" class="btn btn-default btn-sm btn-round btn-right" onclick="testcmd()">更多</button>
+        <button class="btn btn-default btn-sm btn-round" onclick="muteAll();">全体静音</button>
+        <button class="btn btn-default btn-sm btn-round" onclick="muteCancelAll();">解除全体静音</button>
+        <button id="btn-more" class="btn btn-default btn-sm btn-round btn-right" onclick="">更多</button>
     </div>
 </div>
 </div>
