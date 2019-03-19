@@ -66,12 +66,12 @@
                     "                        <div class=\"flex-grow-1\">"+plist[id].formattedDisplayName+"</div>\n"
                 if(plist[id].mute){
                     child +=
-                        "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById("+id+")'></i>\n" +
+                        "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById(\""+id+"\")'></i>\n" +
                         "                    </div>";
                 }
                 else{
                     child +=
-                        "                        <i class=\"fa fa-microphone\" onclick='muteById("+id+")'></i>\n" +
+                        "                        <i class=\"fa fa-microphone\" onclick='muteById(\""+id+"\")'></i>\n" +
                         "                    </div>";
                 }
                 li.innerHTML = child;
@@ -81,9 +81,14 @@
             }
             let cNode =document.getElementById('participantLst').getElementsByTagName('li');
             for( let i=0; i<cNode.length; i++){
+                let bFind = false;
                 for(let id in plist){
-                    if(cNode[i].id == id)
-                        continue;
+                    if(cNode[i].id == id){
+                        bFind = true;
+                        break;
+                    }
+                }
+                if(!bFind){                    
                     document.getElementById('participantLst').removeChild(cNode[i]);
                 }
             }

@@ -274,13 +274,13 @@ class Conference extends Component<Props, State> {
                 ipc.send('main-manager',notify);
             }
         );
-        this._api.on('participant-joined',
+        this._api.on('participantJoined',
             (participant: Object) => {
                 console.warn('participant-joined:'+JSON.stringify(participant));       
                 this._updateParticipant(this._api._participants);
             }
         );
-        this._api.on('participant-left',
+        this._api.on('participantLeft',
             (participant: Object) => {
                 console.warn('participant-left:'+JSON.stringify(participant));       
                 this._updateParticipant(this._api._participants);
@@ -293,12 +293,14 @@ class Conference extends Component<Props, State> {
             }
         );
         this._api.on('show-manager-window',
-            (isShow: Object) => {
-                this._showManagerWindow(isShow);
+            (cmd: Object) => {
+                console.warn('show-manager-window:'+cmd.isShow);       
+                this._showManagerWindow(cmd.isShow);
             }
         );
         ipc.on('manager-main',(event, arg) => {
-
+            console.warn('manager-main'+JSON.stringify(arg));
+            this._api.executeCommand('mute',arg.id);
         })
     }
 
@@ -387,7 +389,7 @@ class Conference extends Component<Props, State> {
         if(plist){
             var notify = {};
             notify.notifyID = 'updateParticipant';
-            notify.participant = plist;
+            notify.plist = plist;
             ipc.send('main-manager',notify);
         }
     }
