@@ -163,15 +163,15 @@ function createJitsiMeetWindow() {
         protocol: 'file:',
         slashes: true
     });
-    managerWin = new BrowserWindow({ width: 400, height: 600, show: false });
+    managerWin = new BrowserWindow({ width: 615, height: 700, show: false ,maximizable: false });
     managerWin.loadURL(indexManagerWinURL);
     managerWin.on('close',(e)=>{
         e.preventDefault();
         managerWin.hide();
     })
-    managerWin.webContents.openDevTools();
+    // managerWin.webContents.openDevTools();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 
@@ -185,7 +185,7 @@ function createJitsiMeetWindow() {
     });
     mainWindow.on('closed', () => {
         mainWindow = null;
-        managerWin.close();
+        managerWin.destroy();
         managerWin = null;
 
     });

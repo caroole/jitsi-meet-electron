@@ -262,6 +262,8 @@ class Conference extends Component<Props, State> {
         this._api.on('readyToClose', (event: Event) => {
             this.props.dispatch(conferenceEnded(this._conference));
             this._navigateToHome(event);
+            this._updateParticipant(null);
+            this._showManagerWindow(false);
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
@@ -300,7 +302,14 @@ class Conference extends Component<Props, State> {
         );
         ipc.on('manager-main',(event, arg) => {
             console.warn('manager-main'+JSON.stringify(arg));
-            this._api.executeCommand('mute',arg.id);
+            switch(arg.cmd){
+                case 'muteById':
+                     this._api.executeCommand('mute',arg.id);
+                     break;
+                case 'kickById':
+                    this._api.executeCommand('kick',arg.id);
+                    break;
+            }
         })
     }
 
