@@ -163,7 +163,10 @@ function createJitsiMeetWindow() {
         protocol: 'file:',
         slashes: true
     });
-    managerWin = new BrowserWindow({ width: 615, height: 700, show: false ,maximizable: false });
+    managerWin = new BrowserWindow({ width: 615, 
+        height: 700, show: false ,
+        icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
+        maximizable: false });
     managerWin.loadURL(indexManagerWinURL);
     managerWin.on('close',(e)=>{
         e.preventDefault();
