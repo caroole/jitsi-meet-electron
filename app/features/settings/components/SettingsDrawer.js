@@ -224,7 +224,7 @@ class SettingsDrawer extends Component<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     return {
-        _avatarURL: 'https://beta.vmeeting.top/images/avatar.png',
+        _avatarURL: 'https://i.yiyangzzt.com/images/avatar.png',
         _email: state.settings.email,
         _name: state.settings.name
     };

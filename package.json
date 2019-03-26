@@ -16,7 +16,7 @@
     "watch": "webpack --config ./webpack.renderer.js --mode development --watch --watch-poll"
   },
   "build": {
-    "appId": "beta.vmeeting.desktop",
+    "appId": "beta.yyzzt.desktop",
     "productName": "ZZTbeta",
     "generateUpdatesFilesForAllChannels": true,
     "files": [

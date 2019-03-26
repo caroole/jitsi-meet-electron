@@ -3,17 +3,17 @@ export default {
     /**
      * The URL with extra information about the app / service.
      */
-    aboutURL: 'https://www.vmeeting.top',
+    aboutURL: 'https://www.yiyangzzt.com',
 
     /**
      * Application name.
      */
-    appName: 'ZZTBeta',
+    appName: 'ZZT',
 
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
      */
-    defaultServerURL: 'https://beta.vmeeting.top',
+    defaultServerURL: 'https://i.yiyangzzt.com',
 
     /**
      * URL to send feedback.
@@ -23,10 +23,10 @@ export default {
     /**
      * The URL of Privacy Policy Page.
      */
-    privacyPolicyURL: 'https://www.vmeeting.top',
+    privacyPolicyURL: 'https://www.yiyangzzt.com',
 
     /**
      * The URL of Terms and Conditions Page.
      */
-    termsAndConditionsURL: 'https://www.vmeeting.top'
+    termsAndConditionsURL: 'https://www.yiyangzzt.com'
 };

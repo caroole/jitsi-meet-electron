@@ -309,6 +309,10 @@ class Conference extends Component<Props, State> {
                 case 'kickById':
                     this._api.executeCommand('kick',arg.id);
                     break;
+                case 'muteMe':
+                    this._api.executeCommand('toggleAudio');
+                    break;
+                    
             }
         })
     }

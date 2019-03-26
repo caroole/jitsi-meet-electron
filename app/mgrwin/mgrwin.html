@@ -32,6 +32,11 @@
             command.id = id;
             sendToMain(command);
         }
+        function muteMe() {
+            let command={};
+            command.cmd = 'muteMe';
+            sendToMain(command);
+        }
         function muteAll() {
             let cNode =document.getElementById('participantLst').getElementsByTagName('li');
             for( let i=0; i<cNode.length; i++){
@@ -72,19 +77,33 @@
                     }
                     let child = "\n" +
                         "                    <div class=\"box\">\n" +
-                        "                        <div class=\"flex-grow-1\"><img class=\"avatar\" src=\"https://beta.vmeeting.top/images/avatar.png\">"+plist[id].formattedDisplayName+"</div>\n"
+                        "                        <div class=\"flex-grow-1\"><img class=\"avatar\" src=\"https://i.yiyangzzt.com/images/avatar.png\">"+plist[id].formattedDisplayName+"</div>\n"
                     if(id !=  localId){
                         child +="                        <i class=\"fa fa fa-sign-out\" onclick='kickById(\""+id+"\")'></i>\n"
-                    }
-                    if(plist[id].mute){
-                        child +=
-                            "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById(\""+id+"\")'></i>\n" +
-                            "                    </div>";
+
+                        if(plist[id].mute){
+                            child +=
+                                "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById(\""+id+"\")'></i>\n" +
+                                "                    </div>";
+                        }
+                        else{
+                            child +=
+                                "                        <i class=\"fa fa-microphone\" onclick='muteById(\""+id+"\")'></i>\n" +
+                                "                    </div>";
+                        }
                     }
                     else{
-                        child +=
-                            "                        <i class=\"fa fa-microphone\" onclick='muteById(\""+id+"\")'></i>\n" +
-                            "                    </div>";
+
+                        if(plist[id].mute){
+                            child +=
+                                "                        <i class=\"fa fa-microphone-slash\" onclick='muteMe()'></i>\n" +
+                                "                    </div>";
+                        }
+                        else{
+                            child +=
+                                "                        <i class=\"fa fa-microphone\" onclick='muteMe()'></i>\n" +
+                                "                    </div>";
+                        }
                     }
 
                     li.innerHTML = child;
