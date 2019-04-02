@@ -38,15 +38,27 @@ if (isDev) {
  */
 var mainWindow = null;
 var managerWin = null;
+var mainTitle = '颐养自在通';
 ipc.on('showManagerWindow', (sys, isShow) => {
     if(isShow){
         managerWin.show();
     }
-    else{
+    else{        
         managerWin.hide();
     }
   });
 ipc.on('main-manager',(sys, msg) => {
+    if ( msg.notifyID === 'videoConferenceJoined'){
+        if ( mainWindow ){
+            mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
+        }
+    }
+    else if ( msg.notifyID === 'conferenceFinished' ){
+        if ( mainWindow ){
+            mainWindow.setTitle(mainTitle);
+        }
+        return;
+    }
     managerWin.webContents.send('main-manager',msg);
   });
 ipc.on('manager-main',(sys, msg) => {
@@ -157,7 +169,6 @@ function createJitsiMeetWindow() {
 
     windowState.manage(mainWindow);
     mainWindow.loadURL(indexURL);
-
     const indexManagerWinURL = URL.format({
         pathname: path.resolve(basePath, './build/mgrwin/mgrwin.html'),
         protocol: 'file:',

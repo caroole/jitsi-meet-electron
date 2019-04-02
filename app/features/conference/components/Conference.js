@@ -264,6 +264,9 @@ class Conference extends Component<Props, State> {
             this._navigateToHome(event);
             this._updateParticipant(null);
             this._showManagerWindow(false);
+            var notify = {};
+            notify.notifyID = 'conferenceFinished';
+            ipc.send('main-manager',notify);
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {

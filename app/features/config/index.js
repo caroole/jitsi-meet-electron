@@ -8,7 +8,7 @@ export default {
     /**
      * Application name.
      */
-    appName: 'ZZT',
+    appName: '颐养自在通',
 
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
