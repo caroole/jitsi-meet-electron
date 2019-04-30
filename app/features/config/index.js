@@ -13,7 +13,7 @@ export default {
     /**
      * The default server URL of Jitsi Meet Deployment that will be used.
      */
-    defaultServerURL: 'https://i.yiyangzzt.com',
+    defaultServerURL: 'https://192.168.3.229',
 
     /**
      * URL to send feedback.
