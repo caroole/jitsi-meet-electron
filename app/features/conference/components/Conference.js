@@ -10,6 +10,7 @@ import { setEmail, setName } from '../../settings';
 import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
+import { startFFMpeg, stopFFMpeg } from '../../local-recorder';
 
 import type { Dispatch } from 'redux';
 
@@ -301,6 +302,22 @@ class Conference extends Component<Props, State> {
             (cmd: Object) => {
                 console.warn('show-manager-window:'+cmd.isShow);       
                 this._showManagerWindow(cmd.isShow);
+            }
+        );
+        this._api.on('common-extend-message',
+            (cmd: Object) => {
+                console.warn('common-extend-message:'+cmd.msg);   
+
+                if( cmd.msg === 'localrecord=start'){
+
+                    startFFMpeg();
+
+                }
+                else if( cmd.msg === 'localrecord=stop'){
+
+                    stopFFMpeg();
+
+                }
             }
         );
         ipc.on('manager-main',(event, arg) => {
