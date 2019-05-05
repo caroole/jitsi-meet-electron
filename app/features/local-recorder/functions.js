@@ -13,7 +13,7 @@ let audeoSubprocess;
  */
 export function startFFMpeg() {
     let path = "/Users/caroole/Desktop"; //第三方根目录
-    videoSubprocess = video.spawn(path + "/ffmpeg", ['-f', 'avfoundation', "-i", '0',path+'/Screen.avi']);
+    videoSubprocess = video.spawn(path + "/ffmpeg", ['-y','-f', 'avfoundation', "-i", '0',path+'/Screen.avi']);
     videoSubprocess.on('close', function(code) {
         console.warn('child process exited with code :' + code);
         videoSubprocess = {};
@@ -29,9 +29,13 @@ export function startFFMpeg() {
 }
 
 
-export function stopFFMpeg() {
+export function stopFFMpeg(data) {
     if (!_.isEmpty(videoSubprocess)){
         videoSubprocess.stdin.write('q');
     }
 
+}
+
+export function mergeMediaFile(filepath){
+    console.log('mergeMediaFile filepath:'+filepath);
 }

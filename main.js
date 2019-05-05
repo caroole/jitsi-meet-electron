@@ -39,6 +39,8 @@ if (isDev) {
 var mainWindow = null;
 var managerWin = null;
 var mainTitle = '颐养自在通';
+
+const dialog = require('electron').dialog;
 ipc.on('showManagerWindow', (sys, isShow) => {
     if(isShow){
         managerWin.show();
@@ -57,6 +59,19 @@ ipc.on('main-manager',(sys, msg) => {
         if ( mainWindow ){
             mainWindow.setTitle(mainTitle);
         }
+        return;
+    }
+    else if ( msg.notifyID === 'saveAudioFile' ){
+        dialog.showOpenDialog({
+            properties: ['openFile', 'openDirectory']
+          }, function (files) {
+            if (files) {
+                let command={};
+                command.cmd = 'saveCallBack';
+                command.msg = files;
+                mainWindow.webContents.send('manager-main',command);
+            }
+          });
         return;
     }
     managerWin.webContents.send('main-manager',msg);
@@ -185,7 +200,7 @@ function createJitsiMeetWindow() {
     })
     // managerWin.webContents.openDevTools();
 
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 

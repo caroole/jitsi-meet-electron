@@ -10,7 +10,7 @@ import { setEmail, setName } from '../../settings';
 import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
-import { startFFMpeg, stopFFMpeg } from '../../local-recorder';
+import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
 
 import type { Dispatch } from 'redux';
 
@@ -308,15 +308,18 @@ class Conference extends Component<Props, State> {
             (cmd: Object) => {
                 console.warn('common-extend-message:'+cmd.msg);   
 
-                if( cmd.msg === 'localrecord=start'){
+                if( cmd.msg.indexOf('localrecord=start') == 0 ){
 
                     startFFMpeg();
 
                 }
-                else if( cmd.msg === 'localrecord=stop'){
+                else if( cmd.msg.indexOf('localrecord=stop') == 0 ){
 
-                    stopFFMpeg();
-
+                    stopFFMpeg(cmd.msg);
+                    var notify = {};
+                    notify.notifyID = 'saveAudioFile';
+                    notify.msg = cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,"");
+                    ipc.send('main-manager',notify);
                 }
             }
         );
@@ -332,7 +335,9 @@ class Conference extends Component<Props, State> {
                 case 'muteMe':
                     this._api.executeCommand('toggleAudio');
                     break;
-                    
+                case 'saveCallBack':
+                    mergeMediaFile(arg.msg);
+                    break;                    
             }
         })
     }
