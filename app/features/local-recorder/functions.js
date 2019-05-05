@@ -3,8 +3,15 @@ import _ from 'lodash';
 
 let video = require('child_process'); //子进程
 let audeo = require('child_process'); //子进程
+let mix_audeo = require('child_process'); //子进程
+let mix_video = require('child_process'); //子进程
+
+const { remote } = require('electron');
+let userDir = remote.app.getPath('userData');
 let videoSubprocess = {};
-let audeoSubprocess;
+let audeoSubprocess = {};
+let mixAudioSubprocess = {};
+let mixVideoSubprocess = {};
 
 /**
  * 
@@ -12,30 +19,80 @@ let audeoSubprocess;
  * 
  */
 export function startFFMpeg() {
-    let path = "/Users/caroole/Desktop"; //第三方根目录
-    videoSubprocess = video.spawn(path + "/ffmpeg", ['-y','-f', 'avfoundation', "-i", '0',path+'/Screen.avi']);
+    videoSubprocess = video.spawn("ffmpeg", ['-y','-rtbufsize', '500M', "-f", "dshow", "-i", 'video=screen-capture-recorder', "-b:v", "6000k","-loglevel","quiet", userDir+'/desktop.avi']);
     videoSubprocess.on('close', function(code) {
-        console.warn('child process exited with code :' + code);
+        console.warn('videoSubprocess exited with code :' + code);
         videoSubprocess = {};
     });
     videoSubprocess.stdout.on('data', function(data) {
-        console.warn('stdout: ' + data);
+        console.warn('videoSubprocess stdout: ' + data);
     });
     videoSubprocess.stderr.on('data', function(data) {
-        console.warn('stderr: ' + data);
+        console.warn('videoSubprocess stderr: ' + data);
+
+    });
+    audeoSubprocess = audeo.spawn("ffmpeg", ['-y',"-f", "dshow", "-i", 'audio=virtual-audio-capturer', "-loglevel","quiet", userDir+'/record.mp3']);
+    audeoSubprocess.on('close', function(code) {
+        console.warn('audeoSubprocess exited with code :' + code);
+        audeoSubprocess = {};
+    });
+    audeoSubprocess.stdout.on('data', function(data) {
+        console.warn('audeoSubprocess stdout: ' + data);
+    });
+    audeoSubprocess.stderr.on('data', function(data) {
+        console.warn('audeoSubprocess stderr: ' + data);
 
     });
 
 }
 
 
-export function stopFFMpeg(data) {
+export function stopFFMpeg() {
     if (!_.isEmpty(videoSubprocess)){
         videoSubprocess.stdin.write('q');
+    }
+    if (!_.isEmpty(audeoSubprocess)){
+        audeoSubprocess.stdin.write('q');
     }
 
 }
 
 export function mergeMediaFile(filepath){
     console.log('mergeMediaFile filepath:'+filepath);
+    _mixAudioFile(filepath);
+
+}
+
+function _mixAudioFile(filepath){
+
+    mixAudioSubprocess = mix_audeo.spawn("ffmpeg", ['-y','-i', userDir + "/temp.flac", "-i", userDir+'/record.mp3', "-filter_complex", '[0]adelay=10|10[del0],[del0][1]amix',"-loglevel","quiet", userDir+'/record_mix.mp3']);
+    mixAudioSubprocess.on('close', function(code) {
+        console.warn('mixAudioSubprocess exited with code :' + code);
+        mixAudioSubprocess = {};
+        _mixVideoFile(filepath);
+    });
+    mixAudioSubprocess.stdout.on('data', function(data) {
+        console.warn('mixAudioSubprocess stdout: ' + data);
+    });
+    mixAudioSubprocess.stderr.on('data', function(data) {
+        console.warn('mixAudioSubprocess stderr: ' + data);
+
+    });
+}
+
+
+function _mixVideoFile(filepath){
+
+    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.avi', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-b:v", "4000k","-loglevel","quiet", filepath]);
+    mixVideoSubprocess.on('close', function(code) {
+        console.warn('mixVideoSubprocess exited with code :' + code);
+        mixVideoSubprocess = {};
+    });
+    mixVideoSubprocess.stdout.on('data', function(data) {
+        console.warn('mixVideoSubprocess stdout: ' + data);
+    });
+    mixVideoSubprocess.stderr.on('data', function(data) {
+        console.warn('mixVideoSubprocess stderr: ' + data);
+
+    });
 }

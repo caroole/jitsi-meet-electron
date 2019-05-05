@@ -20,7 +20,6 @@ const ipc = require('electron').ipcMain;
 
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
-
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -62,13 +61,17 @@ ipc.on('main-manager',(sys, msg) => {
         return;
     }
     else if ( msg.notifyID === 'saveAudioFile' ){
-        dialog.showOpenDialog({
-            properties: ['openFile', 'openDirectory']
-          }, function (files) {
-            if (files) {
+        const options = {
+            title: '保存',
+            filters: [
+              { name: '录像文件', extensions: ['avi'] }
+            ]
+          }
+        dialog.showSaveDialog(options, function (filename) {
+            if (filename) {
                 let command={};
                 command.cmd = 'saveCallBack';
-                command.msg = files;
+                command.msg = filename;
                 mainWindow.webContents.send('manager-main',command);
             }
           });

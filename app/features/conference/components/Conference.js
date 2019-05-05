@@ -15,6 +15,9 @@ import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
 import type { Dispatch } from 'redux';
 
 const ipc = require('electron').ipcRenderer;
+const fs = require('fs');
+const { remote } = require('electron');
+let userDir = remote.app.getPath('userData');
 
 type Props = {
 
@@ -306,8 +309,7 @@ class Conference extends Component<Props, State> {
         );
         this._api.on('common-extend-message',
             (cmd: Object) => {
-                console.warn('common-extend-message:'+cmd.msg);   
-
+                console.warn("common-extend-message in");
                 if( cmd.msg.indexOf('localrecord=start') == 0 ){
 
                     startFFMpeg();
@@ -315,10 +317,15 @@ class Conference extends Component<Props, State> {
                 }
                 else if( cmd.msg.indexOf('localrecord=stop') == 0 ){
 
-                    stopFFMpeg(cmd.msg);
+                    stopFFMpeg();
+                    
+                    // base64编码转换为Buffer，需去除base64编码前缀
+                    var dataBuffer = Buffer.from(cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,""), 'base64');
+                    // fs.writeFile异步保存文件
+                    fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
+                    console.log('audio tempfile:' + userDir + "/temp.flac");
                     var notify = {};
                     notify.notifyID = 'saveAudioFile';
-                    notify.msg = cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,"");
                     ipc.send('main-manager',notify);
                 }
             }
