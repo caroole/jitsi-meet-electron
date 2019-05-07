@@ -10,8 +10,15 @@ module.exports = {
             from: './app/mgrwin',
             to: './mgrwin',
             force: true,
-            ignore: ['*.xml','*.iml'],
+            ignore: ['*.xml','*.iml']
             },
+            
+            {
+                from: './app/loading',
+                to: './loading',
+                force: true,
+                ignore: ['*.xml','*.iml']
+            }
         ])
     ],
     output: {

@@ -19,7 +19,7 @@ let mixVideoSubprocess = {};
  * 
  */
 export function startFFMpeg() {
-    videoSubprocess = video.spawn("ffmpeg", ['-y','-rtbufsize', '500M', "-f", "dshow", "-i", 'video=screen-capture-recorder', "-b:v", "6000k","-loglevel","quiet", userDir+'/desktop.avi']);
+    videoSubprocess = video.spawn("ffmpeg", ['-y','-rtbufsize', '50M', "-f", "dshow", "-video_size","1920x1080","-framerate","30","-pixel_format","yuv420p","-i", 'video=screen-capture-recorder', "-loglevel","quiet", userDir+'/desktop.mp4']);
     videoSubprocess.on('close', function(code) {
         console.warn('videoSubprocess exited with code :' + code);
         videoSubprocess = {};
@@ -83,7 +83,7 @@ function _mixAudioFile(filepath){
 
 function _mixVideoFile(filepath){
 
-    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.avi', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-b:v", "4000k","-loglevel","quiet", filepath]);
+    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.mp4', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-loglevel","quiet", filepath]);
     mixVideoSubprocess.on('close', function(code) {
         console.warn('mixVideoSubprocess exited with code :' + code);
         mixVideoSubprocess = {};

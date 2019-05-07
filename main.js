@@ -37,6 +37,7 @@ if (isDev) {
  */
 var mainWindow = null;
 var managerWin = null;
+var loadingWin = null;
 var mainTitle = '颐养自在通';
 
 const dialog = require('electron').dialog;
@@ -64,7 +65,7 @@ ipc.on('main-manager',(sys, msg) => {
         const options = {
             title: '保存',
             filters: [
-              { name: '录像文件', extensions: ['avi'] }
+              { name: '录像文件', extensions: ['mp4'] }
             ]
           }
         dialog.showSaveDialog(options, function (filename) {
@@ -73,6 +74,7 @@ ipc.on('main-manager',(sys, msg) => {
                 command.cmd = 'saveCallBack';
                 command.msg = filename;
                 mainWindow.webContents.send('manager-main',command);
+                openLoading();
             }
           });
         return;
@@ -83,6 +85,23 @@ ipc.on('manager-main',(sys, msg) => {
       mainWindow.webContents.send('manager-main',msg);
   });
 
+function openLoading(){
+    loadingWin = new BrowserWindow({parent: mainWindow,
+        modal: true, 
+        width: 615, height: 300, 
+        icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
+        maximizable: false ,show: false})
+    
+    const indexLoadingWinURL = URL.format({
+        pathname: path.resolve(basePath, './build/loading/loading.html'),
+        protocol: 'file:',
+        slashes: true
+    });
+    loadingWin.loadURL(indexLoadingWinURL);
+    loadingWin.once('ready-to-show', () => {
+        loadingWin.show()
+    })
+}
 /**
  * Sets the application menu. It is hidden on all platforms except macOS because
  * otherwise copy and paste functionality is not available.

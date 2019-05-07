@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>NumberProgressBar</title>
+  <link rel="stylesheet" type="text/css" href="src/normalize.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="number-pb.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div class="container">
+
+  <section id="random">
+      <div class="number-pb">
+        <div class="number-pb-shown"></div>
+        <div class="number-pb-num">0%</div>
+      </div>
+  </section>
+</div>
+
+
+
+<script src="src/jquery.min.js"></script>
+<script src="src/jquery.velocity.min.js"></script>
+<script src="number-pb.js"></script>
+<script>
+  $(function() {
+    var loopBar = $('#random .number-pb').NumberProgressBar();
+    window.setInterval(function () {
+      loopBar.each(function() {
+        $(this).reach(100); 
+      })
+    }, 1000);
+  });
+</script>
+</body>
+</html>
