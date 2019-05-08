@@ -114,7 +114,7 @@ function _mixAudioFile(filepath){
 
 function _mixVideoFile(filepath){
 
-    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.mp4', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-loglevel","quiet", filepath]);
+    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.mp4', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-c:v","copy","-c:a","aac","-strict","experimental","-loglevel","quiet", filepath]);
     mixVideoSubprocess.on('close', function(code) {
         console.warn('mixVideoSubprocess exited with code :' + code);
         mixVideoSubprocess = {};
@@ -122,6 +122,7 @@ function _mixVideoFile(filepath){
         notify.filepath = filepath;
         if(code == 0){        
             notify.notifyID = 'video-mix-succeed';
+            
         }
         else {
             notify.notifyID = 'video-mix-failed';
