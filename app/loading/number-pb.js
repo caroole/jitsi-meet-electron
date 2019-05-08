@@ -17,6 +17,10 @@
 
     this.reach(this.percentage);
   }
+  
+  NumberProgressBar.prototype.setDuration = function(duration) {
+    this.duration = duration;
+  }
 
   NumberProgressBar.prototype.reach = function(percentage) {
     if (this.last_percentage < 0) {
@@ -100,4 +104,12 @@
     })
   }
 
+  $.fn.setDuration = function(duration) {
+    return this.each(function() {
+      var element = $(this);
+      var progressbar = element.data('number-pb');
+      if (!progressbar) return;
+      progressbar.setDuration(duration);
+    })
+  }
 })(jQuery);

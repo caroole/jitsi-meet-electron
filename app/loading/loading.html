@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>NumberProgressBar</title>
+  <title>生成本地录像文件</title>
   <link rel="stylesheet" type="text/css" href="src/normalize.css">
   <link rel="stylesheet" type="text/css" href="style.css">
   <link rel="stylesheet" type="text/css" href="number-pb.css">
@@ -10,29 +10,76 @@
 <body>
 
 <div class="container">
-
+  <p id="load-txt">正在生成语音文件... ...</p>
   <section id="random">
       <div class="number-pb">
         <div class="number-pb-shown"></div>
         <div class="number-pb-num">0%</div>
       </div>
   </section>
+  <button id="btn-retry" onclick="retry()">重新生成</button>
 </div>
 
 
-
-<script src="src/jquery.min.js"></script>
+<script>window.$ = window.jQuery = require('jquery');</script>
 <script src="src/jquery.velocity.min.js"></script>
 <script src="number-pb.js"></script>
 <script>
-  $(function() {
-    var loopBar = $('#random .number-pb').NumberProgressBar();
-    window.setInterval(function () {
-      loopBar.each(function() {
-        $(this).reach(100); 
-      })
-    }, 1000);
-  });
+  
+  var ipc = require('electron').ipcRenderer;
+  var filepath = null;
+  var loopBar = $('.number-pb').NumberProgressBar();
+  ipc.on('main-loading', (event, arg) => {
+            filepath = arg.filepath;
+            switch (arg.notifyID) {
+                case 'load-process':
+                  setProcess(arg.process);
+                  break;
+                case 'audio-mix-succeed':
+                  $('#load-txt').text('生成语音文件成功，正在生成视频文件，预计大约需要:'+Math.ceil(arg.needTime*11)+" 秒");
+                  console.log('needTime: ', arg.needTime);
+
+                  loopBar.setDuration(arg.needTime*11000);
+
+                  setProcess(99);
+                  break;
+                case 'audio-mix-failed':
+                  $('#load-txt').text('生成语音文件失败，可点击 重新生成 按钮重新生成！');
+                  $('#btn-retry').attr('disabled',false);
+                  break;
+                case 'video-mix-succeed':
+                  $('#load-txt').text('本地录像文件已保存成功。');
+                  loopBar.setDuration(1000);
+                  setProcess(100);
+                  break;
+                case 'video-mix-failed':
+                  $('#load-txt').text('生成视频文件失败，可点击 重新生成 按钮重新生成！');
+                  $('#btn-retry').attr('disabled',false);
+                  break;
+            }
+        });
+  
+
+  function retry(){
+    if(filepath){
+      let command={};
+      command.cmd = 'saveCallBack';
+      command.msg = filepath;
+      ipc.send('manager-main',command);
+      $('#load-txt').text('正在生成语音文件... ...');
+      loopBar.setDuration(100);
+      loopBar.reach(10);
+    }
+  }
+
+  function setProcess(num){
+    loopBar.reach(num);
+  }
+  $(function(){
+    $('#btn-retry').attr('disabled',false);
+    loopBar.setDuration(10000);
+		loopBar.reach(10);
+	})
 </script>
 </body>
 </html>

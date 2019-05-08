@@ -38,6 +38,7 @@ if (isDev) {
 var mainWindow = null;
 var managerWin = null;
 var loadingWin = null;
+var basePath = null;
 var mainTitle = '颐养自在通';
 
 const dialog = require('electron').dialog;
@@ -85,22 +86,39 @@ ipc.on('manager-main',(sys, msg) => {
       mainWindow.webContents.send('manager-main',msg);
   });
 
+ipc.on('main-loading',(sys, msg) => {
+    if (loadingWin){
+        loadingWin.webContents.send('main-loading',msg);
+    }
+});
 function openLoading(){
-    loadingWin = new BrowserWindow({parent: mainWindow,
-        modal: true, 
-        width: 615, height: 300, 
-        icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
-        maximizable: false ,show: false})
+    if (loadingWin){
+        loadingWin.show();
+
+    }
+    else {
+
+        loadingWin = new BrowserWindow({parent: mainWindow,
+            modal: true, 
+            width: 615, height: 300, 
+            icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
+            maximizable: false, minimizable: false, resizable: true, show: false})
+        
+        const indexLoadingWinURL = URL.format({
+            pathname: path.resolve(basePath, './build/loading/loading.html'),
+            protocol: 'file:',
+            slashes: true
+        });
+        loadingWin.loadURL(indexLoadingWinURL);
+        loadingWin.once('ready-to-show', () => {
+            loadingWin.show()
+        });
+        loadingWin.on('closed', () => {
+            loadingWin = null;
     
-    const indexLoadingWinURL = URL.format({
-        pathname: path.resolve(basePath, './build/loading/loading.html'),
-        protocol: 'file:',
-        slashes: true
-    });
-    loadingWin.loadURL(indexLoadingWinURL);
-    loadingWin.once('ready-to-show', () => {
-        loadingWin.show()
-    })
+        });
+        // loadingWin.openDevTools();
+    }
 }
 /**
  * Sets the application menu. It is hidden on all platforms except macOS because
@@ -178,7 +196,7 @@ function createJitsiMeetWindow() {
     });
 
     // Path to root directory.
-    const basePath = isDev ? __dirname : app.getAppPath();
+    basePath = isDev ? __dirname : app.getAppPath();
 
     // URL for index.html which will be our entry point.
     const indexURL = URL.format({
@@ -222,7 +240,7 @@ function createJitsiMeetWindow() {
     })
     // managerWin.webContents.openDevTools();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 

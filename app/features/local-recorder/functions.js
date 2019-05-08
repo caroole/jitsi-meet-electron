@@ -7,6 +7,8 @@ let mix_audeo = require('child_process'); //子进程
 let mix_video = require('child_process'); //子进程
 
 const { remote } = require('electron');
+const ipc = require('electron').ipcRenderer;
+const fs = require('fs');
 let userDir = remote.app.getPath('userData');
 let videoSubprocess = {};
 let audeoSubprocess = {};
@@ -23,6 +25,15 @@ export function startFFMpeg() {
     videoSubprocess.on('close', function(code) {
         console.warn('videoSubprocess exited with code :' + code);
         videoSubprocess = {};
+        
+        var notify = {};
+        if(code == 0){       
+            notify.notifyID = 'video-succeed';
+        }
+        else {
+            notify.notifyID = 'video-failed';
+        }
+        ipc.send('manager-main',notify);
     });
     videoSubprocess.stdout.on('data', function(data) {
         console.warn('videoSubprocess stdout: ' + data);
@@ -35,6 +46,14 @@ export function startFFMpeg() {
     audeoSubprocess.on('close', function(code) {
         console.warn('audeoSubprocess exited with code :' + code);
         audeoSubprocess = {};
+        var notify = {};
+        if(code == 0){       
+            notify.notifyID = 'audio-succeed';
+        }
+        else {
+            notify.notifyID = 'audio-failed';
+        }
+        ipc.send('manager-main',notify);
     });
     audeoSubprocess.stdout.on('data', function(data) {
         console.warn('audeoSubprocess stdout: ' + data);
@@ -69,7 +88,19 @@ function _mixAudioFile(filepath){
     mixAudioSubprocess.on('close', function(code) {
         console.warn('mixAudioSubprocess exited with code :' + code);
         mixAudioSubprocess = {};
-        _mixVideoFile(filepath);
+        let notify = {};
+        notify.filepath = filepath;
+        if(code == 0){
+            _mixVideoFile(filepath);            
+            let states = fs.statSync(userDir+'/desktop.mp4');
+            
+            notify.notifyID = 'audio-mix-succeed';
+            notify.needTime = states.size / 10000000;
+        }
+        else {
+            notify.notifyID = 'audio-mix-failed';
+        }
+        ipc.send('main-loading',notify);
     });
     mixAudioSubprocess.stdout.on('data', function(data) {
         console.warn('mixAudioSubprocess stdout: ' + data);
@@ -87,6 +118,15 @@ function _mixVideoFile(filepath){
     mixVideoSubprocess.on('close', function(code) {
         console.warn('mixVideoSubprocess exited with code :' + code);
         mixVideoSubprocess = {};
+        let notify = {};
+        notify.filepath = filepath;
+        if(code == 0){        
+            notify.notifyID = 'video-mix-succeed';
+        }
+        else {
+            notify.notifyID = 'video-mix-failed';
+        }
+        ipc.send('main-loading',notify);
     });
     mixVideoSubprocess.stdout.on('data', function(data) {
         console.warn('mixVideoSubprocess stdout: ' + data);

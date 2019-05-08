@@ -271,6 +271,7 @@ class Conference extends Component<Props, State> {
             var notify = {};
             notify.notifyID = 'conferenceFinished';
             ipc.send('main-manager',notify);
+            stopFFMpeg();
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
@@ -319,14 +320,14 @@ class Conference extends Component<Props, State> {
 
                     stopFFMpeg();
                     
+                    var notify = {};
+                    notify.notifyID = 'saveAudioFile';
+                    ipc.send('main-manager',notify);
                     // base64编码转换为Buffer，需去除base64编码前缀
                     var dataBuffer = Buffer.from(cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,""), 'base64');
                     // fs.writeFile异步保存文件
                     fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
                     console.log('audio tempfile:' + userDir + "/temp.flac");
-                    var notify = {};
-                    notify.notifyID = 'saveAudioFile';
-                    ipc.send('main-manager',notify);
                 }
             }
         );
