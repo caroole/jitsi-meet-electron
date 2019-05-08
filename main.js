@@ -98,11 +98,10 @@ function openLoading(){
     }
     else {
 
-        loadingWin = new BrowserWindow({parent: mainWindow,
-            modal: true, 
-            width: 615, height: 300, 
+        loadingWin = new BrowserWindow({
+            width: 530, height: 270, 
             icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
-            maximizable: false, minimizable: false, resizable: true, show: false})
+            maximizable: false, minimizable: false, resizable: false, show: false, alwaysOnTop: true})
         
         const indexLoadingWinURL = URL.format({
             pathname: path.resolve(basePath, './build/loading/loading.html'),
@@ -114,8 +113,7 @@ function openLoading(){
             loadingWin.show()
         });
         loadingWin.on('closed', () => {
-            loadingWin = null;
-    
+            loadingWin = null;    
         });
         // loadingWin.openDevTools();
     }
@@ -252,11 +250,18 @@ function createJitsiMeetWindow() {
             shell.openExternal(url);
         }
     });
+    mainWindow.on('close', (e) => {
+        if( loadingWin ){
+            dialog.showErrorBox("录像转储对话框未关闭，请关闭后重试！","");
+            loadingWin.show();
+            e.preventDefault();
+            return;
+        }
+    });
     mainWindow.on('closed', () => {
         mainWindow = null;
         managerWin.destroy();
         managerWin = null;
-
     });
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
