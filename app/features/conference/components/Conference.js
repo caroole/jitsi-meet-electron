@@ -10,11 +10,14 @@ import { setEmail, setName } from '../../settings';
 import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
+import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
 
 import type { Dispatch } from 'redux';
 
 const ipc = require('electron').ipcRenderer;
-const remote = require('electron').remote;
+const fs = require('fs');
+const { remote } = require('electron');
+let userDir = remote.app.getPath('userData');
 
 type Props = {
 
@@ -263,24 +266,87 @@ class Conference extends Component<Props, State> {
         this._api.on('readyToClose', (event: Event) => {
             this.props.dispatch(conferenceEnded(this._conference));
             this._navigateToHome(event);
+            this._updateParticipant(null);
+            this._showManagerWindow(false);
+            var notify = {};
+            notify.notifyID = 'conferenceFinished';
+            ipc.send('main-manager',notify);
+            stopFFMpeg();
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
                 console.warn('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
-                this._onVideoConferenceJoined(conferenceInfo);                
-                ipc.send('testnotify','test');
+                this._onVideoConferenceJoined(conferenceInfo);    
+                var notify = {};
+                notify.notifyID = 'videoConferenceJoined';
+                notify.conferenceInfo = conferenceInfo;
+                ipc.send('main-manager',notify);
             }
         );
-        console.warn('set openManagerWindow');
-        this._api.on('openManagerWindow',
-            (info: Object) => {
-                console.warn('come in openManagerWindow='+info.isopen);
-                this._openManagerWindow();
+        this._api.on('participantJoined',
+            (participant: Object) => {
+                console.warn('participant-joined:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
             }
         );
-        ipc.on('testcmd',(event, arg) => {
-            console.warn('come in testcmd');
+        this._api.on('participantLeft',
+            (participant: Object) => {
+                console.warn('participant-left:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
+            }
+        );
+        this._api.on('audio-mute-changed',
+            (participant: Object) => {
+                console.warn('audio-mute-changed:'+JSON.stringify(participant));       
+                this._updateParticipant(this._api._participants);
+            }
+        );
+        this._api.on('show-manager-window',
+            (cmd: Object) => {
+                console.warn('show-manager-window:'+cmd.isShow);       
+                this._showManagerWindow(cmd.isShow);
+            }
+        );
+        this._api.on('common-extend-message',
+            (cmd: Object) => {
+                console.warn("common-extend-message in");
+                if( cmd.msg.indexOf('localrecord=start') == 0 ){
+
+                    startFFMpeg();
+
+                }
+                else if( cmd.msg.indexOf('localrecord=stop') == 0 ){
+
+                    stopFFMpeg();
+                    
+                    var notify = {};
+                    notify.notifyID = 'saveAudioFile';
+                    ipc.send('main-manager',notify);
+                    // base64编码转换为Buffer，需去除base64编码前缀
+                    var dataBuffer = Buffer.from(cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,""), 'base64');
+                    // fs.writeFile异步保存文件
+                    fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
+                    console.log('audio tempfile:' + userDir + "/temp.flac");
+                }
+            }
+        );
+        ipc.on('manager-main',(event, arg) => {
+            console.warn('manager-main'+JSON.stringify(arg));
+            switch(arg.cmd){
+                case 'muteById':
+                     this._api.executeCommand('mute',arg.id);
+                     break;
+                case 'kickById':
+                    this._api.executeCommand('kick',arg.id);
+                    break;
+                case 'muteMe':
+                    this._api.executeCommand('toggleAudio');
+                    break;
+                case 'saveCallBack':
+                    mergeMediaFile(arg.msg);
+                    break;                    
+            }
         })
     }
 
@@ -350,16 +416,29 @@ class Conference extends Component<Props, State> {
 
     
     /**
-     * Saves conference info on joining it.
+     * Show manager window or not
      *
-     * @param {Object} conferenceInfo - Contains information about the current
-     * conference.
+     *  @param {boolean} isShow - whether show manager window or not.
      * @returns {void}
      */
-    _openManagerWindow() {
-        ipc.send('openManagerWindow','open');
+    _showManagerWindow(isShow: boolean) {
+        ipc.send('showManagerWindow',isShow);
     }
 
+    /**
+     * update participant
+     *
+     *  @param {map} plist - participant list
+     * @returns {void}
+     */
+    _updateParticipant(plist) {
+        if(plist){
+            var notify = {};
+            notify.notifyID = 'updateParticipant';
+            notify.plist = plist;
+            ipc.send('main-manager',notify);
+        }
+    }
     /**
      * Set Avatar URL from settings to conference.
      *

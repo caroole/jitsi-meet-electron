@@ -6,7 +6,7 @@ const ELECTRON_VERSION = require('./package.json').devDependencies.electron;
 module.exports = {
     target: 'electron-renderer',
     entry: { app: './app/index.js' },
-    plugins: [
+    plugins: [       
         new HtmlWebpackPlugin({
             template: './app/index.html'
         })

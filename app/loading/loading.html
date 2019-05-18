@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>转储本地录像文件</title>
+  <link rel="stylesheet" type="text/css" href="src/normalize.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="number-pb.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<div class="container">
+  <p style="color: brown">注意：录像文件转储成功前，请务必不要关闭本对话框！</p>
+  <p id="load-txt">正在转储语音文件... ...</p>
+  <section id="random">
+      <div class="number-pb">
+        <div class="number-pb-shown"></div>
+        <div class="number-pb-num">0%</div>
+      </div>
+  </section>
+  <button id="btn-retry" onclick="retry()">重新转储</button>
+</div>
+
+
+<script>window.$ = window.jQuery = require('jquery');</script>
+<script src="src/jquery.velocity.min.js"></script>
+<script src="number-pb.js"></script>
+<script>
+  
+  var ipc = require('electron').ipcRenderer;
+  var filepath = null;
+  var loopBar = $('.number-pb').NumberProgressBar();
+  var cur_pos = 10;
+  var status = '';
+  var timer = null;
+  var needTime = 0;
+  
+  $('#btn-retry').attr('disabled',true);
+  loopBar.setDuration(10000);
+  cur_pos = 10;
+	loopBar.reach(10);
+  ipc.on('main-loading', (event, arg) => {
+            filepath = arg.filepath;
+            switch (arg.notifyID) {
+                case 'load-process':
+                  setProcess(arg.process);
+                  break;
+                case 'audio-mix-succeed':
+                  if(status != 'audio-mix-succeed'){
+                    status = 'audio-mix-succeed';
+                    needTime = Math.ceil(arg.needTime*0.5);
+                    $('#load-txt').text('转储语音文件成功，正在转储视频文件，预计大约需要:'+needTime+" 秒");
+                    console.log('needTime: ', arg.needTime);
+                    if(timer){
+                      clearInterval(timer);
+                      timer = null;
+                    }
+                    
+                    loopBar.setDuration(1000);
+                    timer = setInterval(function(){
+                      cur_pos ++;
+                      if(cur_pos<=99){
+                        setProcess(cur_pos);
+                      }
+                      else{
+                        clearInterval(timer);
+                        timer = null;                        
+                      }
+                    }, needTime*1000 / 89);
+                  }
+                  break;
+                case 'audio-mix-failed':
+                  if(status != 'audio-mix-failed'){
+                    status = 'audio-mix-failed';
+                    $('#load-txt').text('转储语音文件失败，可点击 重新转储 按钮重新生成！');
+                    $('#btn-retry').attr('disabled',false);
+                    if(timer){
+                      clearInterval(timer);
+                      timer = null;
+                    }
+                  }
+                  break;
+                case 'video-mix-succeed':
+                  if(status != 'video-mix-succeed'){
+                    status = 'video-mix-succeed';
+                    $('#load-txt').text('本地录像文件已转储成功，可以关闭本对话框。');
+                    if(timer){
+                      clearInterval(timer);
+                      timer = null;
+                    }
+                    loopBar.setDuration(100);
+                    setProcess(100);
+                    $('#btn-retry').attr('disabled',false);
+                  }
+                  break;
+                case 'video-mix-failed':
+                  if(status != 'video-mix-failed'){
+                    status = 'video-mix-failed';
+                    $('#load-txt').text('转储视频文件失败，可点击 重新转储 按钮重新生成！');
+                    $('#btn-retry').attr('disabled',false);
+                    
+                    if(timer){
+                      clearInterval(timer);
+                      timer = null;
+                    }
+                  }
+                  break;
+            }
+        });
+  
+
+  function retry(){
+    if(filepath){
+      let command={};
+      command.cmd = 'saveCallBack';
+      command.msg = filepath;
+      ipc.send('manager-main',command);
+      $('#load-txt').text('正在转储语音文件... ...');
+      $('#btn-retry').attr('disabled',true);
+      status = '';
+      loopBar.setDuration(100);
+      cur_pos = 10;
+      loopBar.reach(10);
+    }
+  }
+
+  function setProcess(num){
+    loopBar.reach(num);
+  }
+</script>
+</body>
+</html>

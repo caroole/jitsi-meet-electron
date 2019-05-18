@@ -20,7 +20,6 @@ const ipc = require('electron').ipcMain;
 
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
-
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -38,19 +37,87 @@ if (isDev) {
  */
 var mainWindow = null;
 var managerWin = null;
-ipc.on('openManagerWindow', (sys, msg) => {
-    console.warn(msg)  //接收窗口传来的消息
-    managerWin.show();
-  });
-ipc.on('testnotify',(sys, msg) => {
-    console.warn(msg)  //接收窗口传来的消息
-    managerWin.webContents.send('testnotify',msg);
-  });
-ipc.on('testcmd',(sys, msg) => {
-      console.warn(msg)  //接收窗口传来的消息
-      mainWindow.webContents.send('testcmd',msg);
-    });
+var loadingWin = null;
+var basePath = null;
+var mainTitle = '颐养自在通';
 
+const dialog = require('electron').dialog;
+ipc.on('showManagerWindow', (sys, isShow) => {
+    if(isShow){
+        managerWin.show();
+    }
+    else{        
+        managerWin.hide();
+    }
+  });
+ipc.on('main-manager',(sys, msg) => {
+    if ( msg.notifyID === 'videoConferenceJoined'){
+        if ( mainWindow ){
+            mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
+        }
+    }
+    else if ( msg.notifyID === 'conferenceFinished' ){
+        if ( mainWindow ){
+            mainWindow.setTitle(mainTitle);
+        }
+        return;
+    }
+    else if ( msg.notifyID === 'saveAudioFile' ){
+        const options = {
+            title: '保存',
+            filters: [
+              { name: '录像文件', extensions: ['mp4'] }
+            ]
+          }
+        dialog.showSaveDialog(options, function (filename) {
+            if (filename) {
+                let command={};
+                command.cmd = 'saveCallBack';
+                command.msg = filename;
+                mainWindow.webContents.send('manager-main',command);
+                openLoading();
+            }
+          });
+        return;
+    }
+    managerWin.webContents.send('main-manager',msg);
+  });
+ipc.on('manager-main',(sys, msg) => {
+      mainWindow.webContents.send('manager-main',msg);
+  });
+
+ipc.on('main-loading',(sys, msg) => {
+    if (loadingWin){
+        loadingWin.webContents.send('main-loading',msg);
+    }
+});
+function openLoading(){
+    if (loadingWin){
+        loadingWin.show();
+
+    }
+    else {
+
+        loadingWin = new BrowserWindow({
+            width: 530, height: 270, 
+            icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
+            maximizable: false, minimizable: false, resizable: false, show: false, alwaysOnTop: true})
+        
+        const indexLoadingWinURL = URL.format({
+            pathname: path.resolve(basePath, './build/loading/loading.html'),
+            protocol: 'file:',
+            slashes: true
+        });
+        loadingWin.loadURL(indexLoadingWinURL);
+        loadingWin.once('ready-to-show', () => {
+            loadingWin.show()
+        });
+        loadingWin.on('closed', () => {
+            loadingWin = null;    
+        });
+        // loadingWin.openDevTools();
+    }
+}
 /**
  * Sets the application menu. It is hidden on all platforms except macOS because
  * otherwise copy and paste functionality is not available.
@@ -127,7 +194,7 @@ function createJitsiMeetWindow() {
     });
 
     // Path to root directory.
-    const basePath = isDev ? __dirname : app.getAppPath();
+    basePath = isDev ? __dirname : app.getAppPath();
 
     // URL for index.html which will be our entry point.
     const indexURL = URL.format({
@@ -155,21 +222,23 @@ function createJitsiMeetWindow() {
 
     windowState.manage(mainWindow);
     mainWindow.loadURL(indexURL);
-
     const indexManagerWinURL = URL.format({
         pathname: path.resolve(basePath, './build/mgrwin/mgrwin.html'),
         protocol: 'file:',
         slashes: true
     });
-    managerWin = new BrowserWindow({ width: 400, height: 600, show: false });
+    managerWin = new BrowserWindow({ width: 615, 
+        height: 700, show: false ,
+        icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
+        maximizable: false });
     managerWin.loadURL(indexManagerWinURL);
     managerWin.on('close',(e)=>{
         e.preventDefault();
         managerWin.hide();
     })
-    managerWin.webContents.openDevTools();
+    // managerWin.webContents.openDevTools();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 
@@ -181,11 +250,18 @@ function createJitsiMeetWindow() {
             shell.openExternal(url);
         }
     });
+    mainWindow.on('close', (e) => {
+        if( loadingWin ){
+            dialog.showErrorBox("录像转储对话框未关闭，请关闭后重试！","");
+            loadingWin.show();
+            e.preventDefault();
+            return;
+        }
+    });
     mainWindow.on('closed', () => {
         mainWindow = null;
-        managerWin.close();
+        managerWin.destroy();
         managerWin = null;
-
     });
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();

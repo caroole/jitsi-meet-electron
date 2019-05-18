@@ -10,15 +10,133 @@
     <title>会议管理</title>
     <script src="js/html-font.js"></script>
     <script>
-
         var ipc = require('electron').ipcRenderer;
-        ipc.on('testnotify', (event, arg) => {
-            
-            console.warn(JSON.stringify(arg));
+        var localId;
+        ipc.on('main-manager', (event, arg) => {
+            switch (arg.notifyID) {
+                case 'updateParticipant':
+                    updateParticipant(arg.plist);
+                    break;
+                case 'videoConferenceJoined':
+                    localId = arg.conferenceInfo.id;
+                    break;
+            }
         });
 
-        function testcmd(){
-            ipc.send('testcmd','test');
+        function sendToMain(arg){
+            ipc.send('manager-main',arg);
+        }
+        function muteById(id) {
+            let command={};
+            command.cmd = 'muteById';
+            command.id = id;
+            sendToMain(command);
+        }
+        function muteMe() {
+            let command={};
+            command.cmd = 'muteMe';
+            sendToMain(command);
+        }
+        function muteAll() {
+            let cNode =document.getElementById('participantLst').getElementsByTagName('li');
+            for( let i=0; i<cNode.length; i++){
+                if(cNode[i].id != localId){
+                    muteById(cNode[i].id);
+                }
+            }
+        }
+        function kickById(id) {
+            let command={};
+            command.cmd = 'kickById';
+            command.id = id;
+            sendToMain(command);
+        }
+        function muteCancelById(id) {
+            let command={};
+            command.cmd = 'muteCancelById';
+            command.id = id;
+            sendToMain(command);
+        }
+        function muteCancelAll() {
+
+        }
+        function updateParticipant(plist) {
+            let count = 0;
+            if(plist){
+                for(let id in plist){
+                    // if(id == localId)
+                    //     continue;
+                    let li = document.getElementById(id);
+                    let isOld = false;
+                    if(li){
+                        isOld = true;
+                    }
+                    else{
+                        li = document.createElement('li');
+                        li.id = id;
+                    }
+                    let child = "\n" +
+                        "                    <div class=\"box\">\n" +
+                        "                        <div class=\"flex-grow-1\"><img class=\"avatar\" src=\"https://i.yiyangzzt.com/images/avatar.png\">"+plist[id].formattedDisplayName+"</div>\n"
+                    if(id !=  localId){
+                        child +="                        <i class=\"fa fa fa-sign-out\" onclick='kickById(\""+id+"\")'></i>\n"
+
+                        if(plist[id].mute){
+                            child +=
+                                "                        <i class=\"fa fa-microphone-slash\" onclick='muteCancelById(\""+id+"\")'></i>\n" +
+                                "                    </div>";
+                        }
+                        else{
+                            child +=
+                                "                        <i class=\"fa fa-microphone\" onclick='muteById(\""+id+"\")'></i>\n" +
+                                "                    </div>";
+                        }
+                    }
+                    else{
+
+                        if(plist[id].mute){
+                            child +=
+                                "                        <i class=\"fa fa-microphone-slash\" onclick='muteMe()'></i>\n" +
+                                "                    </div>";
+                        }
+                        else{
+                            child +=
+                                "                        <i class=\"fa fa-microphone\" onclick='muteMe()'></i>\n" +
+                                "                    </div>";
+                        }
+                    }
+
+                    li.innerHTML = child;
+                    if(!isOld){
+                        let firstLi = document.getElementsByTagName('li');
+                        if((id == localId) && firstLi.length>0){
+                            firstLi[0].insertBefore(li);
+                        }
+                        else{
+                            document.getElementById('participantLst').appendChild(li);
+                        }
+                    }
+                    count ++;
+                }
+            }
+            let cNode =document.getElementById('participantLst').getElementsByTagName('li');
+            for( let i=0; i<cNode.length; i++){
+                let bFind = false;
+                if(plist){
+                    for(let id in plist){
+                        if(cNode[i].id == id){
+                            bFind = true;
+                            break;
+                        }
+                    }
+                }
+                if(!bFind){                    
+                    document.getElementById('participantLst').removeChild(cNode[i]);
+                }
+            }
+            let winTitle = document.getElementById('win-title');
+            winTitle.innerHTML = "参会者("+count+")";
+
         }
     </script>
 </head>
@@ -29,77 +147,22 @@
 
     <header class="lui-header">
         <div class="text-center pad10 just-between">
-            <div><h1>参会者(1)</h1></div>
+            <div><h1 id="win-title">参会者(1)</h1></div>
         </div>
     </header>
 
     <section class="content">
         <div class="cont">
-            <ul class="list pad10 mar0 ">
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
-                <li>
-                    <div class="box">
-                        <div class="flex-grow-1">华为P10</div>
-                        <i class="fa fa-microphone"></i></div>
-                </li>
+            <ul id = "participantLst" class="list pad10 mar0 ">
 
             </ul>
         </div>
     </section>
 
     <div class="footer2">
-        <button class="btn btn-default btn-sm btn-round" onclick="startRecording(this);">全体静音</button>
-        <button class="btn btn-default btn-sm btn-round" onclick="stopRecording(this);">解除全体静音</button>
-        <button id="btn-more" class="btn btn-default btn-sm btn-round btn-right" onclick="testcmd()">更多</button>
+        <button class="btn btn-default btn-sm btn-round" onclick="muteAll();">全体静音</button>
+        <!--<button class="btn btn-default btn-sm btn-round" onclick="muteCancelAll();">解除全体静音</button>-->
+        <!--<button id="btn-more" class="btn btn-default btn-sm btn-round btn-right" onclick="">更多</button>-->
     </div>
 </div>
 </div>
