@@ -1,9 +1,9 @@
 {
   "name": "vmeeting-electron",
-  "version": "1.4",
+  "version": "1.4.0",
   "description": "果视视频会议系统",
   "main": "./build/main.js",
-  "productName": "果视视频会议系统",
+  "productName": "vmeeting",
   "scripts": {
     "start": "webpack --config ./webpack.main.js --mode development && concurrently 'npm:watch' 'electron ./build/main.js'",
     "clean": "rm -rf node_modules build dist",
@@ -17,7 +17,7 @@
   },
   "build": {
     "appId": "top.vmeeting.desktop",
-    "productName": "果视视频会议系统",
+    "productName": "vmeeting",
     "generateUpdatesFilesForAllChannels": true,
     "files": [
       "**/*",

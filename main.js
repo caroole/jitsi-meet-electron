@@ -39,7 +39,7 @@ var mainWindow = null;
 var managerWin = null;
 var loadingWin = null;
 var basePath = null;
-var mainTitle = '颐养自在通';
+var mainTitle = '果视科技';
 
 const dialog = require('electron').dialog;
 ipc.on('showManagerWindow', (sys, isShow) => {
