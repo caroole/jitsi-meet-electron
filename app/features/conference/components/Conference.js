@@ -11,6 +11,7 @@ import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
 import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
+import { log } from '../../logger';
 
 import type { Dispatch } from 'redux';
 
@@ -329,6 +330,12 @@ class Conference extends Component<Props, State> {
                     fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
                     console.log('audio tempfile:' + userDir + "/temp.flac");
                 }
+            }
+        );
+        
+        this._api.on('conference-log',
+            (log: Object) => {
+                log(log.log);
             }
         );
         ipc.on('manager-main',(event, arg) => {

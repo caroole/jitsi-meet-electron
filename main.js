@@ -18,8 +18,8 @@ const path = require('path');
 const URL = require('url');
 const ipc = require('electron').ipcMain;
 
-autoUpdater.logger = require('electron-log');
-autoUpdater.logger.transports.file.level = 'info';
+logger = require('electron-log');
+logger.transports.file.level = 'info';
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -51,35 +51,67 @@ ipc.on('showManagerWindow', (sys, isShow) => {
     }
   });
 ipc.on('main-manager',(sys, msg) => {
-    if ( msg.notifyID === 'videoConferenceJoined'){
-        if ( mainWindow ){
-            mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
-        }
-    }
-    else if ( msg.notifyID === 'conferenceFinished' ){
-        if ( mainWindow ){
-            mainWindow.setTitle(mainTitle);
-        }
-        return;
-    }
-    else if ( msg.notifyID === 'saveAudioFile' ){
-        const options = {
-            title: '保存',
-            filters: [
-              { name: '录像文件', extensions: ['mp4'] }
-            ]
-          }
-        dialog.showSaveDialog(options, function (filename) {
-            if (filename) {
-                let command={};
-                command.cmd = 'saveCallBack';
-                command.msg = filename;
-                mainWindow.webContents.send('manager-main',command);
-                openLoading();
+    switch( msg.notifyID ) {
+        case 'videoConferenceJoined':
+            if ( mainWindow ){
+                mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
             }
-          });
-        return;
+            break;
+        case 'conferenceFinished':
+            if ( mainWindow ){
+                mainWindow.setTitle(mainTitle);
+            }
+            return;
+        case 'saveAudioFile':
+            const options = {
+                title: '保存',
+                filters: [
+                  { name: '录像文件', extensions: ['mp4'] }
+                ]
+              }
+            dialog.showSaveDialog(options, function (filename) {
+                if (filename) {
+                    let command={};
+                    command.cmd = 'saveCallBack';
+                    command.msg = filename;
+                    mainWindow.webContents.send('manager-main',command);
+                    openLoading();
+                }
+              });
+            return;
+        case 'notify_log':
+            logger.info(msg.msg);
+            return;
     }
+    // if ( msg.notifyID === 'videoConferenceJoined'){
+    //     if ( mainWindow ){
+    //         mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
+    //     }
+    // }
+    // else if ( msg.notifyID === 'conferenceFinished' ){
+    //     if ( mainWindow ){
+    //         mainWindow.setTitle(mainTitle);
+    //     }
+    //     return;
+    // }
+    // else if ( msg.notifyID === 'saveAudioFile' ){
+    //     const options = {
+    //         title: '保存',
+    //         filters: [
+    //           { name: '录像文件', extensions: ['mp4'] }
+    //         ]
+    //       }
+    //     dialog.showSaveDialog(options, function (filename) {
+    //         if (filename) {
+    //             let command={};
+    //             command.cmd = 'saveCallBack';
+    //             command.msg = filename;
+    //             mainWindow.webContents.send('manager-main',command);
+    //             openLoading();
+    //         }
+    //       });
+    //     return;
+    // }
     managerWin.webContents.send('main-manager',msg);
   });
 ipc.on('manager-main',(sys, msg) => {
@@ -181,6 +213,7 @@ function setApplicationMenu() {
  * Opens new window with index.html(Jitsi Meet is loaded in iframe there).
  */
 function createJitsiMeetWindow() {
+    logger.info("createJitsiMeetWindow enter");
     // Application menu.
     setApplicationMenu();
 
@@ -236,9 +269,9 @@ function createJitsiMeetWindow() {
         e.preventDefault();
         managerWin.hide();
     })
-    // managerWin.webContents.openDevTools();
+    managerWin.webContents.openDevTools();
 
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 
