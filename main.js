@@ -20,6 +20,7 @@ const ipc = require('electron').ipcMain;
 
 logger = require('electron-log');
 logger.transports.file.level = 'info';
+logger.transports.file.maxSize = 10 * 1024 * 1024;
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -51,6 +52,9 @@ ipc.on('showManagerWindow', (sys, isShow) => {
     }
   });
 ipc.on('main-manager',(sys, msg) => {
+    if(msg.notifyID !== 'notify_log'){
+        logger.info("main-manager:"+msg.notifyID);
+    }
     switch( msg.notifyID ) {
         case 'videoConferenceJoined':
             if ( mainWindow ){
@@ -71,11 +75,7 @@ ipc.on('main-manager',(sys, msg) => {
               }
             dialog.showSaveDialog(options, function (filename) {
                 if (filename) {
-                    let command={};
-                    command.cmd = 'saveCallBack';
-                    command.msg = filename;
-                    mainWindow.webContents.send('manager-main',command);
-                    openLoading();
+                    openLoading(filename);
                 }
               });
             return;
@@ -115,18 +115,28 @@ ipc.on('main-manager',(sys, msg) => {
     managerWin.webContents.send('main-manager',msg);
   });
 ipc.on('manager-main',(sys, msg) => {
-      mainWindow.webContents.send('manager-main',msg);
+    logger.info("manager-main:"+msg.cmd);
+    mainWindow.webContents.send('manager-main',msg);
   });
 
 ipc.on('main-loading',(sys, msg) => {
+    
+    logger.info("main-loading:"+msg.notifyID+":"+loadingWin);
     if (loadingWin){
         loadingWin.webContents.send('main-loading',msg);
     }
 });
-function openLoading(){
+function readyForMerge(f){
+
+    let command={};
+    command.cmd = 'saveCallBack';
+    command.msg = f;
+    mainWindow.webContents.send('manager-main',command);
+}
+function openLoading(f){
     if (loadingWin){
         loadingWin.show();
-
+        readyForMerge(f);
     }
     else {
 
@@ -142,7 +152,8 @@ function openLoading(){
         });
         loadingWin.loadURL(indexLoadingWinURL);
         loadingWin.once('ready-to-show', () => {
-            loadingWin.show()
+            loadingWin.show();
+            readyForMerge(f);
         });
         loadingWin.on('closed', () => {
             loadingWin = null;    
@@ -269,9 +280,9 @@ function createJitsiMeetWindow() {
         e.preventDefault();
         managerWin.hide();
     })
-    managerWin.webContents.openDevTools();
+    // managerWin.webContents.openDevTools();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 

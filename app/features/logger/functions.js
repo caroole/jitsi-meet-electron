@@ -7,9 +7,9 @@ const ipc = require('electron').ipcRenderer;
  *
  * 
  */
-export function log(msg) {    
+export function logger(msg) {    
     let notify = {};
     notify.msg = msg;
     notify.notifyID = 'notify_log'
-    ipc.send('manager-main',notify);
+    ipc.send('main-manager',notify);
 }

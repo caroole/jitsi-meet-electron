@@ -13,6 +13,7 @@
         var ipc = require('electron').ipcRenderer;
         var localId;
         ipc.on('main-manager', (event, arg) => {
+            logger(arg.notifyID);
             switch (arg.notifyID) {
                 case 'updateParticipant':
                     updateParticipant(arg.plist);
@@ -62,6 +63,7 @@
         }
         function updateParticipant(plist) {
             let count = 0;
+            logger("updateParticipant,"+plist);
             if(plist){
                 for(let id in plist){
                     // if(id == localId)
@@ -138,6 +140,13 @@
             winTitle.innerHTML = "参会者("+count+")";
 
         }
+    
+  function logger(msg){    
+    let notify = {};
+    notify.msg = "mgrwin:"+msg;
+    notify.notifyID = 'notify_log'
+    ipc.send('main-manager',notify);
+  }
     </script>
 </head>
 

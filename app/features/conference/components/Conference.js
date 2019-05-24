@@ -11,7 +11,7 @@ import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
 import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
-import { log } from '../../logger';
+import { logger } from '../../logger';
 
 import type { Dispatch } from 'redux';
 
@@ -276,7 +276,7 @@ class Conference extends Component<Props, State> {
         });
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
-                console.warn('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
+                logger('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
                 this._onVideoConferenceJoined(conferenceInfo);    
                 var notify = {};
@@ -287,31 +287,31 @@ class Conference extends Component<Props, State> {
         );
         this._api.on('participantJoined',
             (participant: Object) => {
-                console.warn('participant-joined:'+JSON.stringify(participant));       
+                logger('participant-joined:'+JSON.stringify(participant));       
                 this._updateParticipant(this._api._participants);
             }
         );
         this._api.on('participantLeft',
             (participant: Object) => {
-                console.warn('participant-left:'+JSON.stringify(participant));       
+                logger('participant-left:'+JSON.stringify(participant));       
                 this._updateParticipant(this._api._participants);
             }
         );
         this._api.on('audio-mute-changed',
             (participant: Object) => {
-                console.warn('audio-mute-changed:'+JSON.stringify(participant));       
+                logger('audio-mute-changed:'+JSON.stringify(participant));       
                 this._updateParticipant(this._api._participants);
             }
         );
         this._api.on('show-manager-window',
             (cmd: Object) => {
-                console.warn('show-manager-window:'+cmd.isShow);       
+                logger('show-manager-window:'+cmd.isShow);       
                 this._showManagerWindow(cmd.isShow);
             }
         );
         this._api.on('common-extend-message',
             (cmd: Object) => {
-                console.warn("common-extend-message in");
+                logger("common-extend-message in");
                 if( cmd.msg.indexOf('localrecord=start') == 0 ){
 
                     startFFMpeg();
@@ -328,18 +328,17 @@ class Conference extends Component<Props, State> {
                     var dataBuffer = Buffer.from(cmd.msg.replace(/^localrecord=stopdata:audio\/\w+;base64,/,""), 'base64');
                     // fs.writeFile异步保存文件
                     fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
-                    console.log('audio tempfile:' + userDir + "/temp.flac");
+                    logger('audio tempfile:' + userDir + "/temp.flac");
                 }
             }
         );
         
         this._api.on('conference-log',
-            (log: Object) => {
-                log(log.log);
+            (obj: Object) => {
+                logger(obj.log);
             }
         );
         ipc.on('manager-main',(event, arg) => {
-            console.warn('manager-main'+JSON.stringify(arg));
             switch(arg.cmd){
                 case 'muteById':
                      this._api.executeCommand('mute',arg.id);
