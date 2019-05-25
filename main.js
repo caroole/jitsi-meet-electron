@@ -18,8 +18,9 @@ const path = require('path');
 const URL = require('url');
 const ipc = require('electron').ipcMain;
 
-autoUpdater.logger = require('electron-log');
-autoUpdater.logger.transports.file.level = 'info';
+logger = require('electron-log');
+logger.transports.file.level = 'info';
+logger.transports.file.maxSize = 10 * 1024 * 1024;
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -51,50 +52,91 @@ ipc.on('showManagerWindow', (sys, isShow) => {
     }
   });
 ipc.on('main-manager',(sys, msg) => {
-    if ( msg.notifyID === 'videoConferenceJoined'){
-        if ( mainWindow ){
-            mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
-        }
+    if(msg.notifyID !== 'notify_log'){
+        logger.info("main-manager:"+msg.notifyID);
     }
-    else if ( msg.notifyID === 'conferenceFinished' ){
-        if ( mainWindow ){
-            mainWindow.setTitle(mainTitle);
-        }
-        return;
-    }
-    else if ( msg.notifyID === 'saveAudioFile' ){
-        const options = {
-            title: '保存',
-            filters: [
-              { name: '录像文件', extensions: ['mp4'] }
-            ]
-          }
-        dialog.showSaveDialog(options, function (filename) {
-            if (filename) {
-                let command={};
-                command.cmd = 'saveCallBack';
-                command.msg = filename;
-                mainWindow.webContents.send('manager-main',command);
-                openLoading();
+    switch( msg.notifyID ) {
+        case 'videoConferenceJoined':
+            if ( mainWindow ){
+                mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
             }
-          });
-        return;
+            break;
+        case 'conferenceFinished':
+            if ( mainWindow ){
+                mainWindow.setTitle(mainTitle);
+            }
+            return;
+        case 'saveAudioFile':
+            const options = {
+                title: '保存',
+                filters: [
+                  { name: '录像文件', extensions: ['mp4'] }
+                ]
+              }
+            dialog.showSaveDialog(options, function (filename) {
+                if (filename) {
+                    openLoading(filename);
+                }
+              });
+            return;
+        case 'notify_log':
+            logger.info(msg.msg);
+            return;
     }
+    // if ( msg.notifyID === 'videoConferenceJoined'){
+    //     if ( mainWindow ){
+    //         mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
+    //     }
+    // }
+    // else if ( msg.notifyID === 'conferenceFinished' ){
+    //     if ( mainWindow ){
+    //         mainWindow.setTitle(mainTitle);
+    //     }
+    //     return;
+    // }
+    // else if ( msg.notifyID === 'saveAudioFile' ){
+    //     const options = {
+    //         title: '保存',
+    //         filters: [
+    //           { name: '录像文件', extensions: ['mp4'] }
+    //         ]
+    //       }
+    //     dialog.showSaveDialog(options, function (filename) {
+    //         if (filename) {
+    //             let command={};
+    //             command.cmd = 'saveCallBack';
+    //             command.msg = filename;
+    //             mainWindow.webContents.send('manager-main',command);
+    //             openLoading();
+    //         }
+    //       });
+    //     return;
+    // }
     managerWin.webContents.send('main-manager',msg);
   });
 ipc.on('manager-main',(sys, msg) => {
-      mainWindow.webContents.send('manager-main',msg);
+    logger.info("manager-main:"+msg.cmd);
+    mainWindow.webContents.send('manager-main',msg);
   });
 
 ipc.on('main-loading',(sys, msg) => {
+    
+    logger.info("main-loading:"+msg.notifyID+":"+loadingWin);
     if (loadingWin){
         loadingWin.webContents.send('main-loading',msg);
     }
 });
-function openLoading(){
+function readyForMerge(f){
+
+    let command={};
+    command.cmd = 'saveCallBack';
+    command.msg = f;
+    mainWindow.webContents.send('manager-main',command);
+}
+function openLoading(f){
     if (loadingWin){
         loadingWin.show();
-
+        readyForMerge(f);
     }
     else {
 
@@ -110,7 +152,8 @@ function openLoading(){
         });
         loadingWin.loadURL(indexLoadingWinURL);
         loadingWin.once('ready-to-show', () => {
-            loadingWin.show()
+            loadingWin.show();
+            readyForMerge(f);
         });
         loadingWin.on('closed', () => {
             loadingWin = null;    
@@ -181,6 +224,7 @@ function setApplicationMenu() {
  * Opens new window with index.html(Jitsi Meet is loaded in iframe there).
  */
 function createJitsiMeetWindow() {
+    logger.info("createJitsiMeetWindow enter");
     // Application menu.
     setApplicationMenu();
 

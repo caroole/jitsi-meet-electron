@@ -15,6 +15,7 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { AvatarContainer, SettingsContainer } from '../styled';
 import { setEmail, setName } from '../actions';
 
+import { logger } from '../../logger';
 // import ServerURLField from './ServerURLField';
 import StartMutedToggles from './StartMutedToggles';
 
@@ -90,7 +91,7 @@ class SettingsDrawer extends Component<Props, *> {
      * @returns {ReactElement}
      */
     render() {
-        console.warn('run into setting');
+        logger('run into setting');
         return (
             <AkCustomDrawer
                 backIcon = { <ArrowLeft label = 'Back' /> }
@@ -224,7 +225,7 @@ class SettingsDrawer extends Component<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     return {
-        _avatarURL: 'https://i.yiyangzzt.com/images/avatar.png',
+        _avatarURL: 'https://i.vmeeting.top/images/avatar.png',
         _email: state.settings.email,
         _name: state.settings.name
     };
