@@ -16,7 +16,7 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 
-import { Body, Form, Header, Wrapper } from '../styled';
+import { Body, Form, Header, Wrapper ,HeaderLeft,Title} from '../styled';
 
 
 type Props = {
@@ -193,6 +193,8 @@ class Welcome extends Component<Props, State> {
 
         return (
             <Header>
+                <HeaderLeft>
+                    
                 <SpotlightTarget name = 'conference-url'>
                     <Form onSubmit = { this._onFormSubmit }>
                         <FieldTextStateless
@@ -212,6 +214,10 @@ class Welcome extends Component<Props, State> {
                     type = 'button'>
                     进入
                 </Button>
+                </HeaderLeft>
+                <Title>
+                    颐养自在通视频会议系统
+                </Title>
             </Header>
         );
     }
