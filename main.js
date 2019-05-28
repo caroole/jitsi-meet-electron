@@ -282,7 +282,7 @@ function createJitsiMeetWindow() {
     })
     // managerWin.webContents.openDevTools();
 
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
 
