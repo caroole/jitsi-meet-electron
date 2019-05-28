@@ -1,7 +1,7 @@
 // @flow
 
-import Button from '@atlaskit/button';
-import { FieldTextStateless } from '@atlaskit/field-text';
+//import Button from '@atlaskit/button';
+//import { FieldTextStateless } from '@atlaskit/field-text';
 import { SpotlightTarget } from '@atlaskit/onboarding';
 import Page from '@atlaskit/page';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
@@ -16,7 +16,7 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 
-import { Body, Form, Header, Wrapper ,HeaderLeft,Title} from '../styled';
+import { Body, Form, Header, Wrapper ,HeaderLeft,Title, Input,Button} from '../styled';
 
 
 type Props = {
@@ -190,6 +190,9 @@ class Welcome extends Component<Props, State> {
     _renderHeader() {
         const locationState = this.props.location.state;
         const locationError = locationState && locationState.error;
+        const fieldStyle = {
+            height: '60px'
+        };
 
         return (
             <Header>
@@ -197,7 +200,8 @@ class Welcome extends Component<Props, State> {
                     
                 <SpotlightTarget name = 'conference-url'>
                     <Form onSubmit = { this._onFormSubmit }>
-                        <FieldTextStateless
+                        {/* <FieldTextStateless
+                            style = { fieldStyle }
                             autoFocus = { true }
                             isInvalid = { locationError }
                             isLabelHidden = { true }
@@ -205,14 +209,25 @@ class Welcome extends Component<Props, State> {
                             placeholder = '输入会议室名称'
                             shouldFitContainer = { true }
                             type = 'text'
+                            value = { this.state.url } /> */}
+                            <Input
+                            onChange = { this._onURLChange }
+                            type = 'text'
+                            placeholder = '输入会议室名称'
                             value = { this.state.url } />
                     </Form>
                 </SpotlightTarget>
-                <Button
+                {/* <Button
                     appearance = 'primary'
                     onClick = { this._onJoin }
                     type = 'button'>
                     进入
+                </Button> */
+                }
+                <Button
+                onClick = { this._onJoin }
+                type = 'button'>
+                进入
                 </Button>
                 </HeaderLeft>
                 <Title>

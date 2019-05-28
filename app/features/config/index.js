@@ -28,5 +28,15 @@ export default {
     /**
      * The URL of Terms and Conditions Page.
      */
-    termsAndConditionsURL: 'https://www.yiyangzzt.com'
+    termsAndConditionsURL: 'https://www.yiyangzzt.com',
+
+    /**
+     * support link
+     */
+    supportURL: 'https://www.yiyangzzt.com',
+
+    /**
+     * version link
+     */
+    versionURL: 'https://www.yiyangzzt.com'
 };

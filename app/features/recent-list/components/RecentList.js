@@ -161,21 +161,24 @@ class RecentList extends Component<Props, *> {
      * @returns {ReactElement}
      */
     _renderRecentListEntry(conference: RecentListItem) {
+        const title = '会议号 ：' + conference.room;
+        const starttime = '开始时间 ：' + this._renderStartTime(conference);
+        const duration = '会议持续时间 ：' + this._renderDuration(conference);
         return (
             <ConferenceCard
                 key = { conference.startTime }
                 onClick = { this._onNavigateToConference(conference) }>
                 <ConferenceTitle>
-                    { conference.room }
+                    { title }
                 </ConferenceTitle>
-                <TruncatedText>
+                {/* <TruncatedText>
                     { this._renderServerURL(conference.serverURL) }
+                </TruncatedText> */}
+                <TruncatedText>
+                    { starttime }
                 </TruncatedText>
                 <TruncatedText>
-                    { this._renderStartTime(conference) }
-                </TruncatedText>
-                <TruncatedText>
-                    { this._renderDuration(conference) }
+                    { duration }
                 </TruncatedText>
             </ConferenceCard>
         );
