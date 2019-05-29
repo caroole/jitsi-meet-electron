@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import type { Dispatch } from 'redux';
 import { push } from 'react-router-redux';
+import { convertForTrans } from '../../utils';
 
 import {
     ConferenceCard,
@@ -161,7 +162,7 @@ class RecentList extends Component<Props, *> {
      * @returns {ReactElement}
      */
     _renderRecentListEntry(conference: RecentListItem) {
-        const title = '会议号 ：' + conference.room;
+        const title = '会议号 ：' + convertForTrans(conference.room);
         const starttime = '开始时间 ：' + this._renderStartTime(conference);
         const duration = '会议持续时间 ：' + this._renderDuration(conference);
         return (

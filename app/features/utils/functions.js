@@ -4,6 +4,7 @@
 
 import { shell } from 'electron';
 import config from '../config';
+import jitsiLocalStorage from './JitsiLocalStorage';
 
 /**
  * Returns the URL of the external_api.js of the server.
@@ -54,4 +55,16 @@ export function normalizeServerURL(url: string) {
  */
 export function openExternalLink(link: string) {
     shell.openExternal(link);
+}
+
+/**
+ * 
+ */
+export function convertForTrans(uri: ?string) {
+    const displayName = jitsiLocalStorage.getItem("roomName_"+uri);
+    if( displayName && displayName.length > 0){
+        return displayName;
+    }
+
+    return uri;
 }

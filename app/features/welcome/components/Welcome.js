@@ -17,6 +17,8 @@ import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 
 import { Body, Form, Header, Wrapper ,HeaderLeft,Title, Input,Button} from '../styled';
+import { slugify } from 'transliteration';
+import jitsiLocalStorage from '../../utils/JitsiLocalStorage';
 
 
 type Props = {
@@ -148,8 +150,14 @@ class Welcome extends Component<Props, State> {
             return;
         }
 
+        slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
+        const roomValid = slugify(room);
+        if( roomValid != room ){
+            const key = "roomName_"+roomValid;
+            jitsiLocalStorage.setItem(key,room );
+        }
         this.props.dispatch(push('/conference', {
-            room,
+            roomValid,
             serverURL
         }));
     }
