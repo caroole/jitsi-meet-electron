@@ -19,6 +19,7 @@ import { normalizeServerURL } from '../../utils';
 import { Body, Form, Header, Wrapper ,HeaderLeft,Title, Input,Button} from '../styled';
 import { slugify } from 'transliteration';
 import jitsiLocalStorage from '../../utils/JitsiLocalStorage';
+import { logger } from '../../logger';
 
 
 type Props = {
@@ -151,11 +152,14 @@ class Welcome extends Component<Props, State> {
         }
 
         slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
-        let roomValid = slugify(room).replace(' ','');
+        let roomValid = slugify(room).replace(/\s+/g,'');
         if( roomValid != room ){
             const key = "roomName_"+roomValid;
             jitsiLocalStorage.setItem(key,room );
         }
+
+        logger("room:"+room+" roomValid:"+roomValid);
+
         room = roomValid;
         this.props.dispatch(push('/conference', {
             room,
