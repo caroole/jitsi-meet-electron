@@ -151,13 +151,14 @@ class Welcome extends Component<Props, State> {
         }
 
         slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
-        const roomValid = slugify(room);
+        let roomValid = slugify(room).replace(' ','');
         if( roomValid != room ){
             const key = "roomName_"+roomValid;
             jitsiLocalStorage.setItem(key,room );
         }
+        room = roomValid;
         this.props.dispatch(push('/conference', {
-            roomValid,
+            room,
             serverURL
         }));
     }
