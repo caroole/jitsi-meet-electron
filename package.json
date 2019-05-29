@@ -1,9 +1,9 @@
 {
   "name": "vmeeting-electron",
-  "version": "1.1.1",
-  "description": "ZZTBeta 桌面程序",
+  "version": "1.5",
+  "description": "颐养自在通视频会议系统",
   "main": "./build/main.js",
-  "productName": "ZZTBeta Desktop",
+  "productName": "ZZT DeskTop",
   "scripts": {
     "start": "webpack --config ./webpack.main.js --mode development && concurrently 'npm:watch' 'electron ./build/main.js'",
     "clean": "rm -rf node_modules build dist",
@@ -26,15 +26,15 @@
       "!main.js"
     ],
     "mac": {
-      "artifactName": "vmeeting.${ext}",
+      "artifactName": "zzt.${ext}",
       "category": "public.app-category.video",
       "darkModeSupport": true
     },
     "linux": {
-      "artifactName": "vmeeting-${arch}.${ext}",
+      "artifactName": "zzt-${arch}.${ext}",
       "category": "VideoConference;AudioVideo;Audio;Video;Network",
-      "description": "Vmeeting 桌面程序",
-      "executableName": "Vmeeting",
+      "description": "ZZT 桌面程序",
+      "executableName": "zzt",
       "target": [
         {
           "arch": "x64",
@@ -43,7 +43,7 @@
       ]
     },
     "win": {
-      "artifactName": "ZZTbeta.${ext}",
+      "artifactName": "zzt.${ext}",
       "icon": "./resources/icon.ico",
       "target": [
         {
