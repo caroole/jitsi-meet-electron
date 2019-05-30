@@ -63,7 +63,7 @@
         }
         function updateParticipant(plist) {
             let count = 0;
-            logger("updateParticipant,"+plist);
+            logger("updateParticipant,"+JSON.stringify(plist));
             if(plist){
                 for(let id in plist){
                     // if(id == localId)
@@ -110,12 +110,12 @@
 
                     li.innerHTML = child;
                     if(!isOld){
-                        let firstLi = document.getElementsByTagName('li');
-                        if((id == localId) && firstLi.length>0){
-                            firstLi[0].insertBefore(li);
+                        let parent = document.getElementById('participantLst');
+                        if((id == localId) && parent.childNodes.length>0){
+                            parent.insertBefore(li,parent.childNodes[0]);
                         }
                         else{
-                            document.getElementById('participantLst').appendChild(li);
+                            parent.appendChild(li);
                         }
                     }
                     count ++;
