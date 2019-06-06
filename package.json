@@ -33,8 +33,8 @@
     "linux": {
       "artifactName": "vmeeting-${arch}.${ext}",
       "category": "VideoConference;AudioVideo;Audio;Video;Network",
-      "description": "Vmeeting 桌面程序",
-      "executableName": "Vmeeting",
+      "description": "vmeeting 桌面程序",
+      "executableName": "vmeeting",
       "target": [
         {
           "arch": "x64",
@@ -112,7 +112,8 @@
     "redux-persist": "5.10.0",
     "redux-persist-electron-storage": "2.0.0",
     "source-map-support": "0.5.9",
-    "styled-components": "3.4.0"
+    "styled-components": "3.4.0",
+    "transliteration": "^2.1.3"
   },
   "devDependencies": {
     "@babel/core": "7.2.2",

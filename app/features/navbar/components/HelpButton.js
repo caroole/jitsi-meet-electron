@@ -35,12 +35,15 @@ export default class HelpButton extends Component< *, State> {
         this._onAboutClick = openExternalLink.bind(undefined, config.aboutURL);
         this._onIconClick = this._onIconClick.bind(this);
         this._onOpenChange = this._onOpenChange.bind(this);
-        this._onPrivacyClick
-            = openExternalLink.bind(undefined, config.privacyPolicyURL);
-        this._onTermsClick
-            = openExternalLink.bind(undefined, config.termsAndConditionsURL);
-        this._onSendFeedbackClick
-            = openExternalLink.bind(undefined, config.feedbackURL);
+        // this._onPrivacyClick
+        //     = openExternalLink.bind(undefined, config.privacyPolicyURL);
+        // this._onTermsClick
+        //     = openExternalLink.bind(undefined, config.termsAndConditionsURL);
+        // this._onSendFeedbackClick
+        //     = openExternalLink.bind(undefined, config.feedbackURL);
+        this._onSupportClick = openExternalLink.bind(undefined, config.supportURL);
+        this._onVersionClick = openExternalLink.bind(undefined, config.versionURL);
+
     }
 
     _onAboutClick: (*) => void;
@@ -101,7 +104,13 @@ export default class HelpButton extends Component< *, State> {
                         Send Feedback
                     </Item> */}
                     <Item onActivate = { this._onAboutClick }>
-                        关于Vmeeting
+                        关于我们
+                    </Item>
+                    <Item onActivate = { this._onSupportClick }>
+                        技术支持
+                    </Item>
+                    <Item onActivate = { this._onVersionClick }>
+                        版本号
                     </Item>
                 </Group>
             </Droplist>

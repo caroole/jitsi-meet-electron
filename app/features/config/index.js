@@ -28,5 +28,15 @@ export default {
     /**
      * The URL of Terms and Conditions Page.
      */
-    termsAndConditionsURL: 'https://www.vmeeting.top'
+    termsAndConditionsURL: 'https://www.vmeeting.top',
+
+    /**
+     * support link
+     */
+    supportURL: 'https://www.vmeeting.top',
+
+    /**
+     * version link
+     */
+    versionURL: 'https://www.vmeeting.top'
 };

@@ -12,7 +12,7 @@ import type { Dispatch } from 'redux';
 
 import { closeDrawer, DrawerContainer, Logo } from '../../navbar';
 import { Onboarding, startOnboarding } from '../../onboarding';
-import { AvatarContainer, SettingsContainer } from '../styled';
+import { AvatarContainer, SettingsContainer ,Image,Form} from '../styled';
 import { setEmail, setName } from '../actions';
 
 import { logger } from '../../logger';
@@ -45,6 +45,9 @@ type Props = {
      * Name of the user.
      */
     _name: string;
+
+    _namePNG: string;
+    _emailPNG:string;
 };
 
 /**
@@ -107,25 +110,29 @@ class SettingsDrawer extends Component<Props, *> {
                         </AvatarContainer>
                         <SpotlightTarget
                             name = 'name-setting'>
-                            <form onSubmit = { this._onNameFormSubmit }>
+                            <Form onSubmit = { this._onNameFormSubmit }>
+                               <Image
+                                  src = {this.props._namePNG}/>
                                 <FieldText
-                                    label = 'Name'
+                                    label = ''
                                     onBlur = { this._onNameBlur }
                                     shouldFitContainer = { true }
                                     type = 'text'
                                     value = { this.props._name } />
-                            </form>
+                            </Form>
                         </SpotlightTarget>
                         <SpotlightTarget
                             name = 'email-setting'>
-                            <form onSubmit = { this._onEmailFormSubmit }>
+                            <Form onSubmit = { this._onEmailFormSubmit }>
+                               <Image
+                                  src = {this.props._emailPNG}/>
                                 <FieldText
-                                    label = 'Email'
+                                    label = ''
                                     onBlur = { this._onEmailBlur }
                                     shouldFitContainer = { true }
                                     type = 'text'
                                     value = { this.props._email } />
-                            </form>
+                            </Form>
                         </SpotlightTarget>
                         {/* <SpotlightTarget
                             name = 'server-setting'>
@@ -225,9 +232,11 @@ class SettingsDrawer extends Component<Props, *> {
  */
 function _mapStateToProps(state: Object) {
     return {
-        _avatarURL: 'https://i.vmeeting.top/images/avatar.png',
+        _avatarURL: '../resources/logo.png',
         _email: state.settings.email,
-        _name: state.settings.name
+        _name: state.settings.name,
+        _namePNG: '../resources/name.png',
+        _emailPNG: '../resources/email.png'
     };
 }
 

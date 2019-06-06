@@ -12,6 +12,8 @@ import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
 import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
 import { logger } from '../../logger';
+import jitsiLocalStorage from '../../utils/JitsiLocalStorage';
+import { convertForTrans } from '../../utils';
 
 import type { Dispatch } from 'redux';
 
@@ -255,6 +257,12 @@ class Conference extends Component<Props, State> {
             parentNode,
             roomName: this._conference.room
         });
+        
+        const displayName = jitsiLocalStorage.getItem("roomName_"+this._conference.room);
+        const roomName = this._conference.room;
+        if(displayName && displayName.length > 0){
+            this._api.executeCommand('saveRoomName',displayName,roomName);
+        }
         initPopupsConfigurationRender(this._api);
 
         const iframe = this._api.getIFrame();
@@ -279,6 +287,7 @@ class Conference extends Component<Props, State> {
                 logger('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
                 this.props.dispatch(conferenceJoined(this._conference));
                 this._onVideoConferenceJoined(conferenceInfo);    
+                conferenceInfo.roomName = convertForTrans(conferenceInfo.roomName);
                 var notify = {};
                 notify.notifyID = 'videoConferenceJoined';
                 notify.conferenceInfo = conferenceInfo;

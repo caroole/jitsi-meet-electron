@@ -1,7 +1,7 @@
 // @flow
 
-import Button from '@atlaskit/button';
-import { FieldTextStateless } from '@atlaskit/field-text';
+//import Button from '@atlaskit/button';
+//import { FieldTextStateless } from '@atlaskit/field-text';
 import { SpotlightTarget } from '@atlaskit/onboarding';
 import Page from '@atlaskit/page';
 import { AtlasKitThemeProvider } from '@atlaskit/theme';
@@ -16,7 +16,10 @@ import { Onboarding, startOnboarding } from '../../onboarding';
 import { RecentList } from '../../recent-list';
 import { normalizeServerURL } from '../../utils';
 
-import { Body, Form, Header, Wrapper } from '../styled';
+import { Body, Form, Header, Wrapper ,HeaderLeft,Title, Input,Button} from '../styled';
+import { slugify } from 'transliteration';
+import jitsiLocalStorage from '../../utils/JitsiLocalStorage';
+import { logger } from '../../logger';
 
 
 type Props = {
@@ -148,6 +151,16 @@ class Welcome extends Component<Props, State> {
             return;
         }
 
+        slugify.config({ lowercase: true, separator: ' ', allowedChars: 'a-zA-Z0-9' });
+        let roomValid = slugify(room).replace(/\s+/g,'');
+        if( roomValid != room ){
+            const key = "roomName_"+roomValid;
+            jitsiLocalStorage.setItem(key,room );
+        }
+
+        logger("room:"+room+" roomValid:"+roomValid);
+
+        room = roomValid;
         this.props.dispatch(push('/conference', {
             room,
             serverURL
@@ -190,12 +203,18 @@ class Welcome extends Component<Props, State> {
     _renderHeader() {
         const locationState = this.props.location.state;
         const locationError = locationState && locationState.error;
+        const fieldStyle = {
+            height: '60px'
+        };
 
         return (
             <Header>
+                <HeaderLeft>
+                    
                 <SpotlightTarget name = 'conference-url'>
                     <Form onSubmit = { this._onFormSubmit }>
-                        <FieldTextStateless
+                        {/* <FieldTextStateless
+                            style = { fieldStyle }
                             autoFocus = { true }
                             isInvalid = { locationError }
                             isLabelHidden = { true }
@@ -203,15 +222,30 @@ class Welcome extends Component<Props, State> {
                             placeholder = '输入会议室名称'
                             shouldFitContainer = { true }
                             type = 'text'
+                            value = { this.state.url } /> */}
+                            <Input
+                            onChange = { this._onURLChange }
+                            type = 'text'
+                            placeholder = '输入会议室名称'
                             value = { this.state.url } />
                     </Form>
                 </SpotlightTarget>
-                <Button
+                {/* <Button
                     appearance = 'primary'
                     onClick = { this._onJoin }
                     type = 'button'>
                     进入
+                </Button> */
+                }
+                <Button
+                onClick = { this._onJoin }
+                type = 'button'>
+                进入
                 </Button>
+                </HeaderLeft>
+                <Title>
+                    颐养自在通视频会议系统
+                </Title>
             </Header>
         );
     }
