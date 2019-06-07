@@ -19,7 +19,8 @@ export default class Logo extends Component<*> {
     render() {
         return (
             <Icon
-                />
+                glyph = { LogoSVG }
+                size = 'xlarge' />
         );
     }
 }

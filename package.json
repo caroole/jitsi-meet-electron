@@ -1,6 +1,6 @@
 {
   "name": "vmeeting-electron",
-  "version": "1.4.0",
+  "version": "1.5.2",
   "description": "果视视频会议系统",
   "main": "./build/main.js",
   "productName": "vmeeting",
