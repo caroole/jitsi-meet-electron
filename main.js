@@ -257,6 +257,7 @@ function createJitsiMeetWindow() {
         minWidth: 800,
         minHeight: 600,
         show: false,
+        title: mainTitle,
         webPreferences: {
             nativeWindowOpen: true
         }
@@ -296,8 +297,8 @@ function createJitsiMeetWindow() {
     });
     mainWindow.on('close', (e) => {
         if( loadingWin ){
-            dialog.showErrorBox("录像转储对话框未关闭，请关闭后重试！","");
             loadingWin.show();
+            // dialog.showErrorBox("录像转储对话框未关闭，请关闭后重试！","");
             e.preventDefault();
             return;
         }

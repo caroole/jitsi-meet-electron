@@ -29,46 +29,36 @@
   var ipc = require('electron').ipcRenderer;
   var filepath = null;
   var loopBar = $('.number-pb').NumberProgressBar();
-  var cur_pos = 10;
+  var cur_pos = 1;
   var status = '';
-  var timer = null;
-  var needTime = 0;
+  var total_length = 0;
+  var cur_type = 0; //0--mixAudio,1--mixVideo
   
   $('#btn-retry').attr('disabled',true);
-  loopBar.setDuration(10000);
-  cur_pos = 10;
-  loopBar.reach(10);
+  loopBar.setDuration(1000);
+  cur_pos = 1;
+  loopBar.reach(1);
+
   logger("start");
   ipc.on('main-loading', (event, arg) => {
             filepath = arg.filepath;
             logger(arg.notifyID+",status="+status);
 
             switch (arg.notifyID) {
-                case 'load-process':
-                  setProcess(arg.process);
+                case 'load-process':              
+                  loopBar.setDuration(500);
+                  total_length = arg.total;
+                  logger("total_length:"+total_length+" mixedLength:"+arg.mixedLength);
+
+                  setPosByLength(arg.mixedLength);
                   break;
                 case 'audio-mix-succeed':
                   if(status != 'audio-mix-succeed'){
                     status = 'audio-mix-succeed';
-                    needTime = Math.ceil(arg.needTime*0.5);
-                    $('#load-txt').text('转储语音文件成功，正在转储视频文件，预计大约需要:'+needTime+" 秒");
-                    logger('needTime: ', arg.needTime);
-                    if(timer){
-                      clearInterval(timer);
-                      timer = null;
-                    }
-                    
-                    loopBar.setDuration(1000);
-                    timer = setInterval(function(){
-                      cur_pos ++;
-                      if(cur_pos<=99){
-                        setProcess(cur_pos);
-                      }
-                      else{
-                        clearInterval(timer);
-                        timer = null;                        
-                      }
-                    }, needTime*1000 / 89);
+                    $('#load-txt').text('转储语音文件成功，正在转储视频文件...');
+                    cur_pos = 15;
+                    cur_type = 1;
+                    setProcess(cur_pos);       
                   }
                   break;
                 case 'audio-mix-failed':
@@ -76,20 +66,14 @@
                     status = 'audio-mix-failed';
                     $('#load-txt').text('转储语音文件失败，可点击 重新转储 按钮重新生成！');
                     $('#btn-retry').attr('disabled',false);
-                    if(timer){
-                      clearInterval(timer);
-                      timer = null;
-                    }
+                    
                   }
                   break;
                 case 'video-mix-succeed':
                   if(status != 'video-mix-succeed'){
                     status = 'video-mix-succeed';
                     $('#load-txt').text('本地录像文件已转储成功，可以关闭本对话框。');
-                    if(timer){
-                      clearInterval(timer);
-                      timer = null;
-                    }
+                    
                     loopBar.setDuration(100);
                     setProcess(100);
                     $('#btn-retry').attr('disabled',false);
@@ -101,10 +85,6 @@
                     $('#load-txt').text('转储视频文件失败，可点击 重新转储 按钮重新生成！');
                     $('#btn-retry').attr('disabled',false);
                     
-                    if(timer){
-                      clearInterval(timer);
-                      timer = null;
-                    }
                   }
                   break;
             }
@@ -120,14 +100,40 @@
       $('#load-txt').text('正在转储语音文件... ...');
       $('#btn-retry').attr('disabled',true);
       status = '';
-      loopBar.setDuration(100);
-      cur_pos = 10;
-      loopBar.reach(10);
+      loopBar.setDuration(1000);
+      cur_pos = 1;
+      loopBar.reach(1);
     }
   }
 
   function setProcess(num){
     loopBar.reach(num);
+  }
+
+  function setPosByLength(mixedLength){
+    let vpos = 0;
+    if(cur_type == 0){
+      //当前是mixAudio
+      if(total_length >0){
+        vpos = parseInt(15*(mixedLength/total_length));
+
+        if(vpos > cur_pos && vpos<15){
+          cur_pos = vpos;
+          setProcess(cur_pos);
+        }
+      }
+    }   
+    else{
+      //当前是mixVideo
+      if(total_length >0){
+        vpos = parseInt(85*(mixedLength/total_length)+15);
+        if(vpos > cur_pos && vpos<100){
+          cur_pos = vpos;
+          setProcess(cur_pos);
+        }
+      }
+        
+    }
   }
 
   function logger(msg){    

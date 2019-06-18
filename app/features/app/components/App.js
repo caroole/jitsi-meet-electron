@@ -7,7 +7,7 @@ import { Route, Switch } from 'react-router';
 import { ConnectedRouter as Router } from 'react-router-redux';
 
 import { Conference } from '../../conference';
-import config from '../../config';
+// import config from '../../config';
 import { history } from '../../router';
 import { Welcome } from '../../welcome';
 
@@ -23,7 +23,7 @@ export default class App extends Component<*> {
     constructor() {
         super();
 
-        document.title = config.appName;
+        // document.title = 'config.appName';
     }
 
     /**

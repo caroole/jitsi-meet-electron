@@ -16,6 +16,7 @@ let videoSubprocess = {};
 let audeoSubprocess = {};
 let mixAudioSubprocess = {};
 let mixVideoSubprocess = {};
+let total_length = 0;
 
 /**
  * 
@@ -93,7 +94,9 @@ export function mergeMediaFile(filepath){
 
 function _mixAudioFile(filepath){
 
-    mixAudioSubprocess = mix_audeo.spawn("ffmpeg", ['-y','-i', userDir + "/temp.flac", "-i", userDir+'/record.mp3', "-filter_complex", '[0]adelay=10|10[del0],[del0][1]amix',"-loglevel","quiet", userDir+'/record_mix.mp3']);
+    
+    total_length = fs.statSync(userDir+'/record.mp3').size;
+    mixAudioSubprocess = mix_audeo.spawn("ffmpeg", ['-y','-i', userDir + "/temp.flac", "-i", userDir+'/record.mp3', "-filter_complex", '[0]adelay=10|10[del0],[del0][1]amix', userDir+'/record_mix.mp3']);
     mixAudioSubprocess.on('close', function(code) {
         logger('mixAudioSubprocess exited with code :' + code);
         mixAudioSubprocess = {};
@@ -101,10 +104,7 @@ function _mixAudioFile(filepath){
         notify.filepath = filepath;
         if(code == 0){
             _mixVideoFile(filepath);            
-            let states = fs.statSync(userDir+'/desktop.mp4');
-            
             notify.notifyID = 'audio-mix-succeed';
-            notify.needTime = states.size / 10000000;
         }
         else {
             notify.notifyID = 'audio-mix-failed';
@@ -113,11 +113,19 @@ function _mixAudioFile(filepath){
     });
     mixAudioSubprocess.stdout.on('data', function(data) {
         logger('mixAudioSubprocess stdout: ' + data);
-        mixAudioSubprocess = {};
     });
     mixAudioSubprocess.stderr.on('data', function(data) {
         logger('mixAudioSubprocess stderr: ' + data);
-        mixAudioSubprocess = {};
+
+        let str = data.toString().replace(/\s*/g,"");
+        if(str.indexOf('size=')>-1 && str.indexOf('time=')>-1){
+            let size = str.match(/size(\S*)time/)[1];            
+            let notify = {};
+            notify.total = total_length;    
+            notify.mixedLength = parseInt(size.replace("=","").replace("kB",""))*1000;
+            notify.notifyID = 'load-process';
+            ipc.send('main-loading',notify);            
+        }
 
     });
 }
@@ -125,7 +133,8 @@ function _mixAudioFile(filepath){
 
 function _mixVideoFile(filepath){
 
-    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.mp4', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-c:v","copy","-c:a","aac","-strict","experimental","-loglevel","quiet", filepath]);
+    total_length = fs.statSync(userDir+'/desktop.mp4').size;
+    mixVideoSubprocess = mix_video.spawn("ffmpeg", ['-y','-i', userDir+'/desktop.mp4', "-i", userDir+'/record_mix.mp3', "-filter_complex", "adelay=10|10", "-c:v","copy","-c:a","aac","-strict","experimental", filepath]);
     mixVideoSubprocess.on('close', function(code) {
         logger('mixVideoSubprocess exited with code :' + code);
         mixVideoSubprocess = {};
@@ -142,11 +151,19 @@ function _mixVideoFile(filepath){
     });
     mixVideoSubprocess.stdout.on('data', function(data) {
         logger('mixVideoSubprocess stdout: ' + data);
-        mixVideoSubprocess = {};
     });
     mixVideoSubprocess.stderr.on('data', function(data) {
         logger('mixVideoSubprocess stderr: ' + data);
-        mixVideoSubprocess = {};
+        
+        let str = data.toString().replace(/\s*/g,"");
+        if(str.indexOf('size=')>-1 && str.indexOf('time=')>-1){
+            let size = str.match(/size(\S*)time/)[1];            
+            let notify = {};
+            notify.total = total_length;    
+            notify.mixedLength = parseInt(size.replace("=","").replace("kB",""))*1000;
+            notify.notifyID = 'load-process';
+            ipc.send('main-loading',notify);            
+        }
 
     });
 }
