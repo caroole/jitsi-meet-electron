@@ -285,7 +285,7 @@ function createJitsiMeetWindow() {
 
     // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
-    setupAlwaysOnTopMain(mainWindow);
+    setupAlwaysOnTopMain(mainWindow,logger);
 
     mainWindow.webContents.on('new-window', (event, url, frameName) => {
         const target = getPopupTarget(url, frameName);
