@@ -11,6 +11,7 @@ import { getExternalApiURL } from '../../utils';
 import { conferenceEnded, conferenceJoined } from '../actions';
 import { LoadingIndicator, Wrapper } from '../styled';
 import { startFFMpeg, stopFFMpeg, mergeMediaFile } from '../../local-recorder';
+import { openWhiteBoard, stopWhiteBoard } from '../../third-part';
 import { logger } from '../../logger';
 import jitsiLocalStorage from '../../utils/JitsiLocalStorage';
 import { convertForTrans } from '../../utils';
@@ -234,6 +235,38 @@ class Conference extends Component<Props, State> {
         }));
     }
 
+    _getResolutionByName(room: ?string) {
+        if( room.indexOf('1080')>=0 || room.indexOf('quangaoqing')>=0 ){
+            return 1080;
+        }
+
+        return 720;
+    }
+    _getConstraintsByName(room: ?string) {
+        if( room.indexOf('1080')>=0 || room.indexOf('quangaoqing')>=0 ){
+            return {
+                video: {
+                    aspectRatio: 16 / 9,
+                    height: {
+                        ideal: 1080,
+                        max: 1080,
+                        min: 160
+                    }
+                }
+           };
+        }
+
+        return {
+            video: {
+                aspectRatio: 16 / 9,
+                height: {
+                    ideal: 720,
+                    max: 720,
+                    min: 160
+                }
+            }
+       };
+    }
     /**
      * When the script is loaded create the iframe element in this component
      * and attach utils from jitsi-meet-electron-utils.
@@ -246,9 +279,16 @@ class Conference extends Component<Props, State> {
 
         const host = this._conference.serverURL.replace(/https?:\/\//, '');
 
+        const _resolution = this._getResolutionByName(this._conference.room);
+        const _constraints = this._getConstraintsByName(this._conference.room);
+
+        
+
         const configOverwrite = {
             startWithAudioMuted: this.props._startWithAudioMuted,
-            startWithVideoMuted: this.props._startWithVideoMuted
+            startWithVideoMuted: this.props._startWithVideoMuted,
+            resolution: _resolution,
+            constraints: _constraints
         };
 
         this._api = new JitsiMeetExternalAPI(host, {
@@ -339,6 +379,14 @@ class Conference extends Component<Props, State> {
                     fs.writeFileSync(userDir + "/temp.flac", dataBuffer);
                     logger('audio tempfile:' + userDir + "/temp.flac");
                 }
+                else if( cmd.msg.indexOf('whiteboard=open') == 0 ){
+                    openWhiteBoard();
+                    remote.getCurrentWindow().minimize();
+                }
+                else if( cmd.msg.indexOf('whiteboard=close') == 0 ){
+                    stopWhiteBoard();
+                }
+
             }
         );
         
