@@ -15,7 +15,7 @@ let cmdSubprocess = {};
 export function openWhiteBoard() {
     logger('openWhiteBoard');  
 
-    cmdSubprocess = cmd.spawn("openboard");
+    cmdSubprocess = cmd.spawn('C:\\Program Files (x86)\\OpenBoard\\openboard.exe');
     cmdSubprocess.on('close', function(code) {
         logger('openWhiteBoard exited with code :' + code);
         cmdSubprocess = {};
@@ -37,16 +37,4 @@ export function stopWhiteBoard() {
         cmdSubprocess.kill();
         cmdSubprocess = {};
     }
-    // cmdSubprocess = cmd.spawn("tskill openboard");
-    // cmdSubprocess.on('close', function(code) {
-    //     logger('stopWhiteBoard exited with code :' + code);
-    //     cmdSubprocess = {};
-    // });
-    // cmdSubprocess.stdout.on('data', function(data) {
-    //     logger('stopWhiteBoard stdout: ' + data);
-    // });
-    // cmdSubprocess.stderr.on('data', function(data) {
-    //     logger('stopWhiteBoard stderr: ' + data);
-
-    // });
 }
