@@ -53,6 +53,7 @@ function _insertConference(
 ) {
     // Add start time to conference.
     newConference.startTime = Date.now();
+    newConference.endTime = newConference.startTime + 2000;
 
     // Remove same conference.
     const newRecentList: Array<RecentListItem> = recentList.filter(

@@ -83,35 +83,6 @@ ipc.on('main-manager',(sys, msg) => {
             logger.info(msg.msg);
             return;
     }
-    // if ( msg.notifyID === 'videoConferenceJoined'){
-    //     if ( mainWindow ){
-    //         mainWindow.setTitle(mainTitle + ' 会议室: ' + msg.conferenceInfo.roomName);
-    //     }
-    // }
-    // else if ( msg.notifyID === 'conferenceFinished' ){
-    //     if ( mainWindow ){
-    //         mainWindow.setTitle(mainTitle);
-    //     }
-    //     return;
-    // }
-    // else if ( msg.notifyID === 'saveAudioFile' ){
-    //     const options = {
-    //         title: '保存',
-    //         filters: [
-    //           { name: '录像文件', extensions: ['mp4'] }
-    //         ]
-    //       }
-    //     dialog.showSaveDialog(options, function (filename) {
-    //         if (filename) {
-    //             let command={};
-    //             command.cmd = 'saveCallBack';
-    //             command.msg = filename;
-    //             mainWindow.webContents.send('manager-main',command);
-    //             openLoading();
-    //         }
-    //       });
-    //     return;
-    // }
     managerWin.webContents.send('main-manager',msg);
   });
 ipc.on('manager-main',(sys, msg) => {

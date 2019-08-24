@@ -22,7 +22,7 @@ const ipc = require('electron').ipcRenderer;
 const fs = require('fs');
 const { remote } = require('electron');
 let userDir = remote.app.getPath('userData');
-
+let updateConferenceTimer;
 type Props = {
 
     /**
@@ -313,6 +313,7 @@ class Conference extends Component<Props, State> {
         setupWiFiStats(iframe);
 
         this._api.on('readyToClose', (event: Event) => {
+            clearInterval(updateConferenceTimer);
             this.props.dispatch(conferenceEnded(this._conference));
             this._navigateToHome(event);
             this._updateParticipant(null);
@@ -325,6 +326,13 @@ class Conference extends Component<Props, State> {
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
                 logger('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
+                clearInterval(updateConferenceTimer);
+                updateConferenceTimer = setInterval(
+                    () => {
+                        this.props.dispatch(conferenceEnded(this._conference));
+                    },
+                    30000
+                );
                 this.props.dispatch(conferenceJoined(this._conference));
                 this._onVideoConferenceJoined(conferenceInfo);    
                 conferenceInfo.roomName = convertForTrans(conferenceInfo.roomName);
