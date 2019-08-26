@@ -204,8 +204,8 @@ function createJitsiMeetWindow() {
 
     // Load the previous window state with fallback to defaults.
     const windowState = windowStateKeeper({
-        defaultWidth: 800,
-        defaultHeight: 600
+        defaultWidth: 1024,
+        defaultHeight: 768
     });
 
     // Path to root directory.
@@ -225,8 +225,8 @@ function createJitsiMeetWindow() {
         width: windowState.width,
         height: windowState.height,
         icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
-        minWidth: 800,
-        minHeight: 600,
+        minWidth: 1024,
+        minHeight: 768,
         show: false,
         title: mainTitle,
         webPreferences: {
