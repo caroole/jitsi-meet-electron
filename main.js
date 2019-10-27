@@ -12,10 +12,14 @@ const windowStateKeeper = require('electron-window-state');
 const {
     initPopupsConfigurationMain,
     getPopupTarget,
-    setupAlwaysOnTopMain
+    setupAlwaysOnTopMain,
+    setupPowerMonitorMain
 } = require('jitsi-meet-electron-utils');
 const path = require('path');
 const URL = require('url');
+
+// We need this because of https://github.com/electron/electron/issues/18214
+app.commandLine.appendSwitch('disable-site-isolation-trials');
 
 autoUpdater.logger = require('electron-log');
 autoUpdater.logger.transports.file.level = 'info';
@@ -133,7 +137,8 @@ function createJitsiMeetWindow() {
         minHeight: 600,
         show: false,
         webPreferences: {
-            nativeWindowOpen: true
+            nativeWindowOpen: true,
+            nodeIntegration: true
         }
     };
 
@@ -143,6 +148,7 @@ function createJitsiMeetWindow() {
 
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
+    setupPowerMonitorMain(mainWindow);
 
     mainWindow.webContents.on('new-window', (event, url, frameName) => {
         const target = getPopupTarget(url, frameName);
