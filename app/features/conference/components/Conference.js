@@ -1,10 +1,19 @@
 // @flow
 
 import Spinner from '@atlaskit/spinner';
-import { initPopupsConfigurationRender, RemoteControl, setupAlwaysOnTopRender, setupScreenSharingForWindow, setupWiFiStats } from 'jitsi-meet-electron-utils';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
+
+import {
+    RemoteControl,
+    setupScreenSharingForWindow,
+    setupAlwaysOnTopRender,
+    initPopupsConfigurationRender,
+    setupWiFiStats,
+    setupPowerMonitorRender
+} from 'jitsi-meet-electron-utils';
+
 import config from '../../config';
 import { setEmail, setName } from '../../settings';
 import { getExternalApiURL } from '../../utils';
@@ -113,6 +122,7 @@ class Conference extends Component<Props, State> {
         this._ref = React.createRef();
 
         this._onIframeLoad = this._onIframeLoad.bind(this);
+        this._onVideoConferenceEnded = this._onVideoConferenceEnded.bind(this);
     }
 
     /**
@@ -311,18 +321,10 @@ class Conference extends Component<Props, State> {
         new RemoteControl(iframe); // eslint-disable-line no-new
         setupAlwaysOnTopRender(this._api);
         setupWiFiStats(iframe);
+        setupPowerMonitorRender(this._api);
 
-        this._api.on('readyToClose', (event: Event) => {
-            clearInterval(updateConferenceTimer);
-            this.props.dispatch(conferenceEnded(this._conference));
-            this._navigateToHome(event);
-            this._updateParticipant(null);
-            this._showManagerWindow(false);
-            var notify = {};
-            notify.notifyID = 'conferenceFinished';
-            ipc.send('main-manager',notify);
-            stopFFMpeg();
-        });
+        this._api.on('suspendDetected', this._onVideoConferenceEnded);
+        this._api.on('readyToClose', this._onVideoConferenceEnded);
         this._api.on('videoConferenceJoined',
             (conferenceInfo: Object) => {
                 logger('videoConferenceJoined:'+JSON.stringify(conferenceInfo));
@@ -419,6 +421,27 @@ class Conference extends Component<Props, State> {
                     break;                    
             }
         })
+    }
+
+    _onVideoConferenceEnded: (*) => void;
+
+    /**
+     * Dispatches conference ended and navigates to home screen.
+     *
+     * @param {Event} event - Event by which the function is called.
+     * @returns {void}
+     * @private
+     */
+    _onVideoConferenceEnded(event: Event) {
+        clearInterval(updateConferenceTimer);
+        this.props.dispatch(conferenceEnded(this._conference));
+        this._navigateToHome(event);
+        this._updateParticipant(null);
+        this._showManagerWindow(false);
+        var notify = {};
+        notify.notifyID = 'conferenceFinished';
+        ipc.send('main-manager',notify);
+        stopFFMpeg();
     }
 
     /**

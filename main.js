@@ -12,7 +12,8 @@ const windowStateKeeper = require('electron-window-state');
 const {
     initPopupsConfigurationMain,
     getPopupTarget,
-    setupAlwaysOnTopMain
+    setupAlwaysOnTopMain,
+    setupPowerMonitorMain
 } = require('jitsi-meet-electron-utils');
 const path = require('path');
 const URL = require('url');
@@ -21,6 +22,9 @@ const ipc = require('electron').ipcMain;
 logger = require('electron-log');
 logger.transports.file.level = 'info';
 logger.transports.file.maxSize = 10 * 1024 * 1024;
+// We need this because of https://github.com/electron/electron/issues/18214
+app.commandLine.appendSwitch('disable-site-isolation-trials');
+
 /**
  * When in development mode:
  * - Load debug utilities (don't open the DevTools window by default though)
@@ -36,7 +40,7 @@ if (isDev) {
  * IMPORTANT: Must be defined as global in order to not be garbage collected
  * acidentally.
  */
-var mainWindow = null;
+let mainWindow = null;
 var managerWin = null;
 var loadingWin = null;
 var basePath = null;
@@ -114,7 +118,11 @@ function openLoading(f){
         loadingWin = new BrowserWindow({
             width: 530, height: 270, 
             icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
-            maximizable: false, minimizable: false, resizable: false, show: false, alwaysOnTop: true})
+            maximizable: false, minimizable: false, resizable: false, show: false, alwaysOnTop: true,
+            webPreferences: {
+                nativeWindowOpen: true,
+                nodeIntegration: true
+            }})
         
         const indexLoadingWinURL = URL.format({
             pathname: path.resolve(basePath, './build/loading/loading.html'),
@@ -230,7 +238,8 @@ function createJitsiMeetWindow() {
         show: false,
         title: mainTitle,
         webPreferences: {
-            nativeWindowOpen: true
+            nativeWindowOpen: true,
+            nodeIntegration: true
         }
     };
 
@@ -246,7 +255,11 @@ function createJitsiMeetWindow() {
     managerWin = new BrowserWindow({ width: 615, 
         height: 700, show: false ,
         icon: path.resolve(basePath, './resources/icons/icon_512x512.png'),
-        maximizable: false });
+        maximizable: false,
+        webPreferences: {
+            nativeWindowOpen: true,
+            nodeIntegration: true
+        } });
     managerWin.loadURL(indexManagerWinURL);
     managerWin.on('close',(e)=>{
         e.preventDefault();
@@ -257,6 +270,7 @@ function createJitsiMeetWindow() {
     // mainWindow.webContents.openDevTools();
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow,logger);
+    setupPowerMonitorMain(mainWindow);
 
     mainWindow.webContents.on('new-window', (event, url, frameName) => {
         const target = getPopupTarget(url, frameName);
