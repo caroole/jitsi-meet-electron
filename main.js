@@ -13,10 +13,12 @@ const {
     initPopupsConfigurationMain,
     getPopupTarget,
     setupAlwaysOnTopMain,
-    setupPowerMonitorMain
+    setupPowerMonitorMain,
+    setupScreenSharingMain
 } = require('jitsi-meet-electron-utils');
 const path = require('path');
 const URL = require('url');
+const config = require('./app/features/config');
 
 // We need this because of https://github.com/electron/electron/issues/18214
 app.commandLine.appendSwitch('disable-site-isolation-trials');
@@ -149,6 +151,7 @@ function createJitsiMeetWindow() {
     initPopupsConfigurationMain(mainWindow);
     setupAlwaysOnTopMain(mainWindow);
     setupPowerMonitorMain(mainWindow);
+    setupScreenSharingMain(mainWindow, config.default.appName);
 
     mainWindow.webContents.on('new-window', (event, url, frameName) => {
         const target = getPopupTarget(url, frameName);
